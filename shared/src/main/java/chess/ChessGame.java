@@ -10,15 +10,20 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    public ChessGame() {
+    private boolean isWhite;
 
+    public ChessGame() {
+        this.isWhite = True;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        if this.isWhite:
+            return TeamColor.WHITE;
+        else:
+            return TeamColor.BLACK;
     }
 
     /**
