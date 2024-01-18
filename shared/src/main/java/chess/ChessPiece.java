@@ -10,11 +10,11 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
-    private ChessPiece.PieceType PieceType;
+    private ChessPiece.PieceType pieceType;
     private ChessGame.TeamColor pieceColor;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.PieceType = type;
+        this.pieceType = type;
         this.pieceColor = pieceColor;
     }
 
@@ -41,7 +41,7 @@ public class ChessPiece {
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return this.PieceType;
+        return this.pieceType;
     }
 
     /**

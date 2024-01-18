@@ -10,20 +10,23 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    private boolean isWhite;
+    private final boolean isWhite;
+    private ChessBoard board;
 
     public ChessGame() {
         this.isWhite = True;
+        this.board = null;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        if this.isWhite:
+        if (this.isWhite) {
             return TeamColor.WHITE;
-        else:
+        } else {
             return TeamColor.BLACK;
+        }
     }
 
     /**
@@ -101,7 +104,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -110,6 +113,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return this.board;
     }
 }
