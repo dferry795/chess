@@ -1,9 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -55,7 +52,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> pieceMovesList = new ArrayList<>();
+        Collection<ChessMove> pieceMovesList = new HashSet<>();
         if (this.pieceType == PieceType.BISHOP){
             int currentRow = myPosition.getRow() - 1;
             int currentCol = myPosition.getColumn() - 1;
@@ -437,14 +434,27 @@ public class ChessPiece {
 
             if (row >= 1 && row <= 8 && col >= 1 && col <= 8){
                 ChessPosition end_position = new ChessPosition(row, col);
-                pieceMovesList.add(new ChessMove(myPosition, end_position, null));
 
-                if ((direction == 1 && myPosition.getRow() == 2) || (direction == -1 && myPosition.getRow() == 7)) {
-                    row += direction;
-
-                    if (row >= 1 && row <= 8){
-                        end_position = new ChessPosition(row, col);
+                if (board.getPiece(end_position) == null) {
+                    if ((direction == 1 && row == 8) || (direction == -1 && row == 1)) {
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.KNIGHT));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.QUEEN));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.BISHOP));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.ROOK));
+                    } else{
                         pieceMovesList.add(new ChessMove(myPosition, end_position, null));
+                    }
+
+                    if ((direction == 1 && myPosition.getRow() == 2) || (direction == -1 && myPosition.getRow() == 7)) {
+                        row += direction;
+
+                        if (row >= 1 && row <= 8) {
+                            end_position = new ChessPosition(row, col);
+
+                            if (board.getPiece(end_position) == null) {
+                                pieceMovesList.add(new ChessMove(myPosition, end_position, null));
+                            }
+                        }
                     }
                 }
             }
@@ -454,7 +464,14 @@ public class ChessPiece {
             if (row >= 1 && row <= 8 && col >= 1 && col <= 8) {
                 ChessPosition end_position = new ChessPosition(row, col);
                 if (board.getPiece(end_position) != null && board.getPiece(end_position).pieceColor != this.pieceColor) {
-                    pieceMovesList.add(new ChessMove(myPosition, end_position, null));
+                    if ((direction == 1 && row == 8) || (direction == -1 && row == 1)) {
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.KNIGHT));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.BISHOP));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.QUEEN));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.ROOK));
+                    } else{
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, null));
+                    }
                 }
             }
 
@@ -462,7 +479,14 @@ public class ChessPiece {
             if (row >= 1 && row <= 8 && col >= 1 && col <= 8) {
                 ChessPosition end_position = new ChessPosition(row, col);
                 if (board.getPiece(end_position) != null && board.getPiece(end_position).pieceColor != this.pieceColor) {
-                    pieceMovesList.add(new ChessMove(myPosition, end_position, null));
+                    if ((direction == 1 && row == 8) || (direction == -1 && row == 1)) {
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.KNIGHT));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.BISHOP));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.QUEEN));
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.ROOK));
+                    } else{
+                        pieceMovesList.add(new ChessMove(myPosition, end_position, null));
+                    }
                 }
             }
         }
