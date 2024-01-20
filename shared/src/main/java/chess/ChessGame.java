@@ -14,7 +14,7 @@ public class ChessGame {
     private ChessBoard board;
 
     public ChessGame() {
-        this.isWhite = True;
+        this.isWhite = true;
         this.board = null;
     }
 
