@@ -465,10 +465,7 @@ public class ChessPiece {
                 ChessPosition end_position = new ChessPosition(row, col);
                 if (board.getPiece(end_position) != null && board.getPiece(end_position).pieceColor != this.pieceColor) {
                     if ((direction == 1 && row == 8) || (direction == -1 && row == 1)) {
-                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.KNIGHT));
-                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.BISHOP));
-                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.QUEEN));
-                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.ROOK));
+                        promotePawn(myPosition, end_position, pieceMovesList);
                     } else{
                         pieceMovesList.add(new ChessMove(myPosition, end_position, null));
                     }
@@ -480,10 +477,7 @@ public class ChessPiece {
                 ChessPosition end_position = new ChessPosition(row, col);
                 if (board.getPiece(end_position) != null && board.getPiece(end_position).pieceColor != this.pieceColor) {
                     if ((direction == 1 && row == 8) || (direction == -1 && row == 1)) {
-                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.KNIGHT));
-                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.BISHOP));
-                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.QUEEN));
-                        pieceMovesList.add(new ChessMove(myPosition, end_position, PieceType.ROOK));
+                        promotePawn(myPosition, end_position, pieceMovesList);
                     } else{
                         pieceMovesList.add(new ChessMove(myPosition, end_position, null));
                     }
@@ -492,6 +486,13 @@ public class ChessPiece {
         }
 
         return pieceMovesList;
+    }
+
+    private void promotePawn(ChessPosition startPosition, ChessPosition endPosition, Collection<ChessMove> pieceMovesList){
+        pieceMovesList.add(new ChessMove(startPosition, endPosition, PieceType.KNIGHT));
+        pieceMovesList.add(new ChessMove(startPosition, endPosition, PieceType.BISHOP));
+        pieceMovesList.add(new ChessMove(startPosition, endPosition, PieceType.QUEEN));
+        pieceMovesList.add(new ChessMove(startPosition, endPosition, PieceType.ROOK));
     }
 
     @Override
