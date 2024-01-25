@@ -10,23 +10,19 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    private final boolean isWhite;
+    private TeamColor teamTurn;
     private ChessBoard board;
 
     public ChessGame() {
-        this.isWhite = true;
-        this.board = null;
+        this.teamTurn = setTeamTurn(TeamColor.WHITE);
+        this.board = new ChessBoard();
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        if (this.isWhite) {
-            return TeamColor.WHITE;
-        } else {
-            return TeamColor.BLACK;
-        }
+        return this.teamTurn;
     }
 
     /**
@@ -34,8 +30,8 @@ public class ChessGame {
      *
      * @param team the team whose turn it is
      */
-    public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+    public TeamColor setTeamTurn(TeamColor team) {
+        return this.teamTurn = team;
     }
 
     /**
@@ -54,7 +50,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        return board.getPiece(startPosition).pieceMoves(board, startPosition);
     }
 
     /**
