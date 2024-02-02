@@ -100,10 +100,9 @@ public class ChessGame {
                         Collection<ChessMove> movesSet = this.validMoves(checkPos);
                         ChessMove kingMove = new ChessMove(checkPos, kingPos, null);
 
-                        for (int k=0; k<movesSet.size(); k++){
-                            if (kingMove == movesSet[k]) {
-                                inCheck = true;
-                            }
+                        if (movesSet.contains(kingMove)){
+                            inCheck = true;
+                            break;
                         }
                     }
                 }
