@@ -51,8 +51,8 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (board.getPiece(startPosition) != null) {
-            return board.getPiece(startPosition).pieceMoves(board, startPosition);
+        if (this.board.getPiece(startPosition) != null) {
+            return this.board.getPiece(startPosition).pieceMoves(board, startPosition);
         } else{
             return null;
         }
@@ -75,7 +75,42 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        boolean inCheck = false;
+        ChessPosition kingPos = new ChessPosition(1, 1);
+
+        for (int i = 1; i <= 8; i++){
+            for (int j = 0; j <= 8; j++){
+                ChessPosition checkPos = new ChessPosition(i, j);
+
+                if (this.board.getPiece(checkPos) != null){
+                    if (this.board.getPiece(checkPos).getPieceType() == ChessPiece.PieceType.KING && this.board.getPiece(checkPos).getTeamColor() == teamColor){
+                        kingPos = checkPos;
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (int i = 1; i <= 8; i++){
+            for (int j = 0; j <= 8; j++){
+                ChessPosition checkPos = new ChessPosition(i, j);
+
+                if (this.board.getPiece(checkPos) != null){
+                    if (this.board.getPiece(checkPos).getTeamColor() != teamColor){
+                        Collection<ChessMove> movesSet = this.validMoves(checkPos);
+                        ChessMove kingMove = new ChessMove(checkPos, kingPos, null);
+
+                        for (int k=0; k<movesSet.size(); k++){
+                            if (kingMove == movesSet[k]) {
+                                inCheck = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return inCheck;
     }
 
     /**
