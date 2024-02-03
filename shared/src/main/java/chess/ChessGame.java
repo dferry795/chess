@@ -67,8 +67,8 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = this.board.getPiece(move.getStartPosition());
 
-        if (piece == null){
-            throw new InvalidMoveException("No piece at Start");
+        if(piece == null){
+            throw new InvalidMoveException();
         }
 
         Collection<ChessMove> movesSet = this.validMoves(move.getStartPosition());
@@ -78,7 +78,7 @@ public class ChessGame {
             this.board.addPiece(move.getStartPosition(), null);
             this.board.addPiece(move.getEndPosition(), piece);
         } else {
-            throw new InvalidMoveException("Invalid Move");
+            throw new InvalidMoveException();
         }
     }
 
@@ -132,7 +132,7 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
-    public boolean isInCheckmate(TeamColor teamColor) {
+    public boolean isInCheckmate(TeamColor teamColor) throws InvalidMoveException {
         if (!isInCheck(teamColor)){
             return false;
         }
@@ -145,11 +145,15 @@ public class ChessGame {
                 if (piece != null && piece.getTeamColor() == teamColor){
                     Collection<ChessMove> movesSet = this.validMoves(piecePos);
                     for (ChessMove move: movesSet){
-                        ChessGame tempGame = this;
-                        tempGame.makeMove(move);
+                        try {
+                            ChessGame tempGame = this.clone();
+                            tempGame.makeMove(move);
 
-                        if (!tempGame.isInCheck(teamColor)){
-                            return false;
+                            if (!tempGame.isInCheck(teamColor)) {
+                                return false;
+                            }
+                        } catch(InvalidMoveException e){
+                            throw e;
                         }
                     }
                 }
@@ -186,6 +190,13 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return this.board;
+    }
+
+    public ChessGame clone(){
+        ChessGame newGame = new ChessGame();
+        newGame.setBoard(this.getBoard());
+        newGame.setTeamTurn(this.getTeamTurn());
+        return newGame;
     }
 
     @Override
