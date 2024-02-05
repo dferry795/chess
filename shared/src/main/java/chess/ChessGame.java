@@ -82,6 +82,10 @@ public class ChessGame {
                 this.board.addPiece(move.getEndPosition(), null);
                 throw new InvalidMoveException("Cannot put king in check");
             } else{
+                if (move.getPromotionPiece() != null){
+                    ChessPiece promoPiece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+                    this.board.addPiece(move.getEndPosition(), promoPiece);
+                }
                 if (this.getTeamTurn() == TeamColor.WHITE){
                     this.setTeamTurn(TeamColor.BLACK);
                 } else{
@@ -144,7 +148,32 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (this.isInCheck(teamColor)) {
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    ChessPosition piecePos = new ChessPosition(i, j);
+                    ChessPiece piece = this.board.getPiece(piecePos);
+
+                    if (piece != null && piece.getTeamColor() == teamColor) {
+                        Collection<ChessMove> movesSet = this.validMoves(piecePos);
+                        for (ChessMove move : movesSet) {
+                            try {
+                                ChessGame tempGame = this.copy();
+                                tempGame.makeMove(move);
+
+                                if (!tempGame.isInCheck(teamColor)) {
+                                    return false;
+                                }
+                            } catch (InvalidMoveException e) {
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
