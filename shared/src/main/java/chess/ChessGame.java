@@ -67,26 +67,29 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = this.board.getPiece(move.getStartPosition());
 
-        if (piece.getTeamColor() == this.teamTurn) {
+        if (piece.getTeamColor() != this.getTeamTurn()) {
+            throw new InvalidMoveException("Not teams turn");
+        }
 
-            Collection<ChessMove> movesSet = this.validMoves(move.getStartPosition());
+        Collection<ChessMove> movesSet = this.validMoves(move.getStartPosition());
 
-            if (movesSet.contains(move)) {
-                ChessGame tempGame = this.copy();
-                tempGame.board.addPiece(move.getStartPosition(), null);
-                tempGame.board.addPiece(move.getEndPosition(), piece);
+        if (movesSet.contains(move)) {
+            this.board.addPiece(move.getStartPosition(), null);
+            this.board.addPiece(move.getEndPosition(), piece);
 
-                if (!tempGame.isInCheck(piece.getTeamColor())){
-                    this.board.addPiece(move.getStartPosition(), null);
-                    this.board.addPiece(move.getEndPosition(), piece);
-                } else{
-                    throw new InvalidMoveException();
-                }
+            if (this.isInCheck(piece.getTeamColor())){
+                this.board.addPiece(move.getStartPosition(), piece);
+                this.board.addPiece(move.getEndPosition(), null);
+                throw new InvalidMoveException("Cannot put king in check");
             } else{
-                throw new InvalidMoveException();
+                if (this.getTeamTurn() == TeamColor.WHITE){
+                    this.setTeamTurn(TeamColor.BLACK);
+                } else{
+                    this.setTeamTurn(TeamColor.WHITE);
+                }
             }
         } else{
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Invalid Move");
         }
     }
 
@@ -140,33 +143,8 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
-    public boolean isInCheckmate(TeamColor teamColor) throws InvalidMoveException {
-        if (!isInCheck(teamColor)) {
-
-            for (int i = 1; i <= 8; i++) {
-                for (int j = 1; j <= 8; j++) {
-                    ChessPosition piecePos = new ChessPosition(i, j);
-                    ChessPiece piece = this.board.getPiece(piecePos);
-
-                    if (piece != null && piece.getTeamColor() == teamColor) {
-                        Collection<ChessMove> movesSet = this.validMoves(piecePos);
-                        for (ChessMove move : movesSet) {
-
-                            ChessGame tempGame = this.copy();
-                            tempGame.makeMove(move);
-
-                            if (!tempGame.isInCheck(teamColor)) {
-                                return false;
-                            }
-                            break;
-
-                        }
-                    }
-                }
-            }
-
-        }
-        return true;
+    public boolean isInCheckmate(TeamColor teamColor) {
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -224,4 +202,6 @@ public class ChessGame {
                 ", board=" + board +
                 '}';
     }
+
+
 }
