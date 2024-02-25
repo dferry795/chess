@@ -1,5 +1,8 @@
 package server;
 
+import model.UserData;
+import service.userService;
+import service.gameService;
 import spark.*;
 
 public class Server {
@@ -10,12 +13,12 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.post("/user/:username/:password/:email", this::register);
-        Spark.post("/session/:username/:password", this::login);
-        Spark.delete("/session/:authToken", this::logout);
-        Spark.get("/game/", this::listGames);
-        Spark.post("/game/:gameName", this::createGame);
-        Spark.put("/game/:ClientColor/:gameID", this::joinGame);
+        Spark.post("/user/:username/:password/:email", userService::register);
+        Spark.post("/session/:username/:password", userService::login);
+        Spark.delete("/session/:authToken", userService::logout);
+        Spark.get("/game/", gameService::listGames);
+        Spark.post("/game/:gameName", gameService::createGame);
+        Spark.put("/game/:ClientColor/:gameID", gameService::joinGame);
         Spark.delete("/db", this::clearApplication);
 
         Spark.awaitInitialization();
@@ -25,9 +28,5 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
-    }
-
-    private Array register(Request req, Response res){
-
     }
 }
