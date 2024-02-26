@@ -3,11 +3,19 @@ package dataAccess;
 import model.UserData;
 
 public class userDOA {
-    public UserData getUser(String username){
-
+    public UserData getUser(String username, memoryDB data){
+        for (UserData user: data.userList){
+            if (user.username() == username){
+                return user;
+            }
+        }
+        return null;
     }
 
-    public UserData createUser(String username, String password, String email){
-        
+    public UserData createUser(UserData user, memoryDB data){
+        data.userList.add(user);
+        return user;
     }
+
+
 }

@@ -1,11 +1,17 @@
 package server;
 
+import dataAccess.memoryDB;
 import model.UserData;
 import service.userService;
 import service.gameService;
 import spark.*;
 
 public class Server {
+
+    private Object dataBase;
+    public server(){
+        this.dataBase = new memoryDB();
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
