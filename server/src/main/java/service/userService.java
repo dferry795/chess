@@ -15,8 +15,10 @@ public class userService {
 
     }
 
-    public AuthData login(UserData user, memoryDB data){
-
+    public AuthData login(String username, String password, memoryDB data){
+        if (userDoa.getUser(username) != null && userDoa.getUser(username).password == password){
+            
+        }
     }
 
     public void logout(UserData user, memoryDB data){
