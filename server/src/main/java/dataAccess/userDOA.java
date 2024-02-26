@@ -12,9 +12,8 @@ public class userDOA {
         return null;
     }
 
-    public UserData createUser(UserData user, memoryDB data){
+    public void createUser(UserData user, memoryDB data){
         data.userList.add(user);
-        return user;
     }
 
 

@@ -29,11 +29,11 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user/:username/:password/:email", this::register);
-        Spark.post("/session/:username/:password", userServ.login());
-        Spark.delete("/session/:authToken", userServ.logout());
-        Spark.get("/game/", gameService::listGames);
-        Spark.post("/game/:gameName", gameService::createGame);
-        Spark.put("/game/:ClientColor/:gameID", gameService::joinGame);
+        Spark.post("/session/:username/:password", this::login);
+        Spark.delete("/session/:authToken", this::logout);
+        Spark.get("/game/", this::listGames);
+        Spark.post("/game/:gameName", this::createGame);
+        Spark.put("/game/:ClientColor/:gameID", this::joinGame);
         Spark.delete("/db", this::clearApplication);
 
         Spark.awaitInitialization();
@@ -52,5 +52,25 @@ public class Server {
 
     private AuthData login(Request req, Response res) throws DataAccessException {
         return userServ.login(req.params(":username"), req.params(":password"), dataBase);
+    }
+
+    private void logout(Request req, Response res){
+        ...
+    }
+
+    private void listGames(Request req, Response res){
+        ...
+    }
+
+    private void createGame(Request req, Response res){
+        ...
+    }
+
+    private void joinGame(Request req, Response res){
+        ...
+    }
+
+    private void clearApplication(Request req, Response res){
+        ...
     }
 }
