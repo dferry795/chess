@@ -16,5 +16,7 @@ public class userDOA {
         data.userList.add(user);
     }
 
-
+    public void clear(memoryDB data){
+        data.userList.clear();
+    }
 }

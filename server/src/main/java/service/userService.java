@@ -26,23 +26,27 @@ public class userService {
             authData.createAuth(auth, data);
             return auth;
         } else{
-            throw DataAccessException;
+            throw new DataAccessException("Error: description");
         }
 
     }
 
-    public AuthData login(String username, String password, memoryDB data){
-        if (userData.getUser(username, data) != null && userData.getUser(username, data).password() == password){
-            String authToken = UUID.randomUUID().toString();
-            AuthData auth = new AuthData(authToken, username);
-            authData.createAuth(auth, data);
-            return auth;
-        } else{
-            throw DataAccessException;
+    public AuthData login(String username, String password, memoryDB data) throws DataAccessException {
+        if (userData.getUser(username, data) != null){
+            if (userData.getUser(username, data).password() == password) {
+                String authToken = UUID.randomUUID().toString();
+                AuthData auth = new AuthData(authToken, username);
+                authData.createAuth(auth, data);
+                return auth;
+            } else {
+                throw new DataAccessException("Error: description");
+            }
+        } else {
+            throw new DataAccessException("Error: unauthorized");
         }
     }
 
-    public void logout(String auth, memoryDB data){
+    public void logout(String auth, memoryDB data) throws DataAccessException {
         if (authData.getAuth(auth, data) != null){
             AuthData token = authData.getAuth(auth, data);
             authData.deleteAuth(token, data);
