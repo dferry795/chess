@@ -4,30 +4,31 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataAccess.DataAccessException;
 import dataAccess.memoryDB;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import model.*;
 import service.authService;
 import service.userService;
 import service.gameService;
 import spark.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 
 public class Server {
 
-    private authService authServ;
-    private gameService gameServ;
-    private memoryDB dataBase;
-    private userService userServ;
-    private AuthData userAuth;
+    private final authService authServ;
+    private final gameService gameServ;
+    private final memoryDB dataBase;
+    private final userService userServ;
+    private ArrayList<AuthData> userAuth;
 
     public Server(){
         this.dataBase = new memoryDB();
         this.authServ = new authService();
         this.gameServ = new gameService();
         this.userServ = new userService();
-        this.userAuth = null;
+        this.userAuth = new ArrayList<>();
     }
 
     public int run(int desiredPort) {
@@ -37,12 +38,13 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::register);
-        Spark.post("/session/:username/:password", (req, res) -> login(req, res));
-        Spark.delete("/session/:authToken", this::logout);
-        Spark.get("/game/", this::listGames);
-        Spark.post("/game/:gameName", this::createGame);
-        Spark.put("/game/:ClientColor/:gameID", this::joinGame);
+        Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
+        Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
         Spark.delete("/db", this::clearApplication);
+        Spark.exception(DataAccessException.class, this::exeptionHandler);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -57,52 +59,86 @@ public class Server {
         try {
             UserData user = new Gson().fromJson(req.body(), UserData.class);
             AuthData auth = userServ.register(user, dataBase);
-            this.userAuth = auth;
+            this.userAuth.add(auth);
             return new Gson().toJson(auth);
         } catch (DataAccessException ex){
-            throw ex;
+           return exeptionHandler(ex, req, res);
         }
+
     }
 
-    private String login(Request req, Response res) throws DataAccessException {
-        var serializer = new Gson();
+    private Object login(Request req, Response res) throws DataAccessException {
         try {
-            AuthData user_auth = userServ.login(req.params(":username"), req.params(":password"), dataBase);
-            this.userAuth = user_auth;
-            return serializer.toJson(user_auth);
-        } catch (DataAccessException ex){
-            throw ex;
+            LoginRequest loginReq = new Gson().fromJson(req.body(), LoginRequest.class);
+            AuthData user_auth = userServ.login(loginReq.username(), loginReq.password(), dataBase);
+            this.userAuth.add(user_auth);
+            return new Gson().toJson(user_auth);
+        } catch (DataAccessException ex) {
+            return exeptionHandler(ex, req, res);
         }
     }
 
-    private Object logout(Request req, Response res) throws DataAccessException {
-        userServ.logout(this.userAuth.authToken(), dataBase);
-        var serializer = new Gson();
-        var json = serializer.toJson(null);
-        return json;
-    }
-
-    private HashSet<GameData> listGames(Request req, Response res) throws DataAccessException {
+    private Object logout(Request req, Response res) {
         try {
-            return gameServ.listGames(this.userAuth.authToken(), dataBase);
-        } catch (DataAccessException ex){
-            throw ex;
+            userServ.logout(this.userAuth.getFirst().authToken(), dataBase);
+            this.userAuth.removeFirst();
+            return new Gson().toJson(null);
+        } catch (DataAccessException ex) {
+            return exeptionHandler(ex, req, res);
         }
     }
 
-    private int createGame(Request req, Response res) throws DataAccessException {
-        return gameServ.createGame(req.params(":gameName"), this.userAuth.authToken(), dataBase);
+    private Object listGames(Request req, Response res) throws DataAccessException {
+        try {
+            var list = gameServ.listGames(this.userAuth.getLast().authToken(), dataBase);
+
+            return new Gson().toJson(Map.of("games", list));
+        } catch (DataAccessException ex){
+            return exeptionHandler(ex, req, res);
+        }
+    }
+
+    private Object createGame(Request req, Response res) throws DataAccessException {
+        try {
+            var name = req.params(":GameName");
+            var id = gameServ.createGame(name, this.userAuth.getLast().authToken(), dataBase);
+            String idString = Integer.toString(id);
+            return new Gson().toJson(Map.of("gameID", idString));
+        } catch (DataAccessException ex){
+            return exeptionHandler(ex, req, res);
+        }
     }
 
     private Object joinGame(Request req, Response res) throws DataAccessException {
-        gameServ.joinGame(req.params(":ClientColor"), Integer.valueOf(req.params(":gameID")), this.userAuth, dataBase);
-        var serializer = new Gson();
-        var json = serializer.toJson(null);
-        return json;
+        try {
+            joinRequest joinReq = new Gson().fromJson(req.body(), joinRequest.class);
+            gameServ.joinGame(joinReq.playerColor(), joinReq.gameID(), this.userAuth.getLast(), dataBase);
+            var serializer = new Gson();
+            var json = serializer.toJson(null);
+            return json;
+        } catch(DataAccessException ex){
+            return exeptionHandler(ex, req, res);
+        }
     }
 
     private Object clearApplication(Request req, Response res){
         authServ.clearApplication(dataBase);
-        return new Gson().toJson(this.dataBase);
+        return new Gson().toJson(null);
+    }
+
+    private Object exeptionHandler(DataAccessException ex, Request req, Response res) {
+        if (Objects.equals(ex.getMessage(), "Error: unauthorized")) {
+            res.status(401);
+            return new Gson().toJson(Map.of("message", "Error: unauthorized"));
+        } else if (Objects.equals(ex.getMessage(), "Error: bad request")) {
+            res.status(400);
+            return new Gson().toJson(Map.of("message", "Error: bad request"));
+        } else if (Objects.equals(ex.getMessage(), "Error: already taken")) {
+            res.status(403);
+            return new Gson().toJson(Map.of("message", "Error: already taken"));
+        } else {
+            res.status(500);
+            return new Gson().toJson(Map.of("message", "Error: description"));
+        }
     }
 }

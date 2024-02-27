@@ -2,10 +2,12 @@ package dataAccess;
 
 import model.UserData;
 
+import java.util.Objects;
+
 public class userDOA {
-    public UserData getUser(String username, memoryDB data){
+    public UserData getUser(String username, String password, memoryDB data){
         for (UserData user: data.userList){
-            if (user.username() == username){
+            if (Objects.equals(user.username(), username) && Objects.equals(user.password(), password)){
                 return user;
             }
         }

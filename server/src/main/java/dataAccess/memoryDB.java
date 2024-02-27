@@ -4,16 +4,17 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class memoryDB {
-    public final HashSet<UserData> userList;
-    public final HashSet<AuthData> authList;
-    public final HashSet<GameData> gameList;
+    public final ArrayList<UserData> userList;
+    public final ArrayList<AuthData> authList;
+    public final ArrayList<GameData> gameList;
 
     public memoryDB(){
-        this.userList = new HashSet<UserData>();
-        this.authList = new HashSet<AuthData>();
-        this.gameList = new HashSet<GameData>();
+        this.userList = new ArrayList<>();
+        this.authList = new ArrayList<>();
+        this.gameList = new ArrayList<>();
     }
 }

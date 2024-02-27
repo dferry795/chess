@@ -2,17 +2,16 @@ package dataAccess;
 
 import model.AuthData;
 
+import java.util.Objects;
+
 public class authDOA {
-    public AuthData getAuth(String authToken, memoryDB data) throws DataAccessException {
+    public AuthData getAuth(String authToken, memoryDB data){
         for (AuthData auth: data.authList){
-            if (authToken == auth.authToken()){
+            if (Objects.equals(authToken, auth.authToken())){
                 return auth;
-            } else{
-                return null;
             }
         }
-
-        throw new DataAccessException("Error: Description");
+        return null;
     }
 
     public void createAuth(AuthData auth, memoryDB data){

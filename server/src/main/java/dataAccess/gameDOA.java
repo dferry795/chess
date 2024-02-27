@@ -2,10 +2,12 @@ package dataAccess;
 
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class gameDOA {
-    public HashSet<GameData> listGames(memoryDB data){
+    public ArrayList<GameData> listGames(memoryDB data){
         return data.gameList;
     }
 
@@ -22,17 +24,27 @@ public class gameDOA {
         return null;
     }
 
-    public void updateGame(int gameID, String color, String username, memoryDB data){
+    public void updateGame(int gameID, String color, String username, memoryDB data) throws DataAccessException {
         for (GameData game: data.gameList){
             if (game.gameID() == gameID){
                 GameData gameInfo = game;
-                data.gameList.remove(game);
-                if (color == "WHITE") {
-                    GameData new_game = new GameData(gameInfo.gameID(), username, gameInfo.blackUsername(), gameInfo.gameName(), gameInfo.game());
-                    data.gameList.add(new_game);
-                } else if (color == "BLACK") {
-                    GameData new_game = new GameData(gameInfo.gameID(), gameInfo.whiteUsername(), username, gameInfo.gameName(), gameInfo.game());
-                    data.gameList.add(new_game);
+
+                if (Objects.equals(color, "WHITE")) {
+                    if (game.whiteUsername() == null) {
+                        data.gameList.remove(game);
+                        GameData new_game = new GameData(gameInfo.gameID(), username, gameInfo.blackUsername(), gameInfo.gameName(), gameInfo.game());
+                        data.gameList.add(new_game);
+                    } else {
+                        throw new DataAccessException("Error: already taken");
+                    }
+                } else if (Objects.equals(color, "BLACK")) {
+                    if (game.blackUsername() == null) {
+                        data.gameList.remove(game);
+                        GameData new_game = new GameData(gameInfo.gameID(), gameInfo.whiteUsername(), username, gameInfo.gameName(), gameInfo.game());
+                        data.gameList.add(new_game);
+                    } else {
+                        throw new DataAccessException("Error: already taken");
+                    }
                 }
             }
         }

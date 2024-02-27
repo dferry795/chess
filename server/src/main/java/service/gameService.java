@@ -16,13 +16,14 @@ public class gameService {
     private final userDOA userDataAccess;
     private final gameDOA gameDataAccess;
 
-    public gameService(){
+    public gameService() {
         this.authDataAccess = new authDOA();
         this.userDataAccess = new userDOA();
         this.gameDataAccess = new gameDOA();
     }
-    public HashSet<GameData> listGames(String auth, memoryDB data) throws DataAccessException {
-        if (authDataAccess.getAuth(auth, data) != null){
+
+    public ArrayList<GameData> listGames(String auth, memoryDB data) throws DataAccessException {
+        if (authDataAccess.getAuth(auth, data) != null) {
             return gameDataAccess.listGames(data);
         } else {
             throw new DataAccessException("Error: Description");
@@ -30,7 +31,7 @@ public class gameService {
     }
 
     public int createGame(String name, String authToken, memoryDB data) throws DataAccessException {
-        if (authDataAccess.getAuth(authToken, data) != null){
+        if (authDataAccess.getAuth(authToken, data) != null) {
             Random rand = new Random();
             int upperbound = 1000;
             int gameID = rand.nextInt(upperbound);
@@ -39,13 +40,19 @@ public class gameService {
             gameDataAccess.createGame(game, data);
             return gameID;
         } else {
-            throw new DataAccessException("Error: Description");
+            throw new DataAccessException("Error: unauthorized");
         }
     }
 
     public void joinGame(String color, int gameID, AuthData auth, memoryDB data) throws DataAccessException {
-        if (authDataAccess.getAuth(auth.authToken(), data) != null && gameDataAccess.getGame(gameID, data) != null){
-            gameDataAccess.updateGame(gameID, color, auth.username(), data);
-        }
+            if (authDataAccess.getAuth(auth.authToken(), data) != null) {
+                if (gameDataAccess.getGame(gameID, data) != null) {
+                    gameDataAccess.updateGame(gameID, color, auth.username(), data);
+                } else {
+                    throw new DataAccessException("Error: bad request");
+                }
+            } else {
+                throw new DataAccessException("Error: unauthorized");
+            }
     }
 }
