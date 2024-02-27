@@ -21,7 +21,7 @@ public class Server {
     private final gameService gameServ;
     private final memoryDB dataBase;
     private final userService userServ;
-    private ArrayList<AuthData> userAuth;
+    private final ArrayList<AuthData> userAuth;
 
     public Server(){
         this.dataBase = new memoryDB();
@@ -80,8 +80,8 @@ public class Server {
 
     private Object logout(Request req, Response res) {
         try {
-            userServ.logout(this.userAuth.getFirst().authToken(), dataBase);
-            this.userAuth.removeFirst();
+            userServ.logout(this.userAuth.getLast().authToken(), dataBase);
+            this.userAuth.removeLast();
             return new Gson().toJson(null);
         } catch (DataAccessException ex) {
             return exeptionHandler(ex, req, res);
@@ -113,17 +113,15 @@ public class Server {
         try {
             joinRequest joinReq = new Gson().fromJson(req.body(), joinRequest.class);
             gameServ.joinGame(joinReq.playerColor(), joinReq.gameID(), this.userAuth.getLast(), dataBase);
-            var serializer = new Gson();
-            var json = serializer.toJson(null);
-            return json;
+            return new Gson().toJson(null);
         } catch(DataAccessException ex){
             return exeptionHandler(ex, req, res);
         }
     }
 
     private Object clearApplication(Request req, Response res){
-        authServ.clearApplication(dataBase);
-        return new Gson().toJson(null);
+            authServ.clearApplication(dataBase);
+            return new Gson().toJson(null);
     }
 
     private Object exeptionHandler(DataAccessException ex, Request req, Response res) {

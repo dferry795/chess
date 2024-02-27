@@ -27,12 +27,11 @@ public class gameDOA {
     public void updateGame(int gameID, String color, String username, memoryDB data) throws DataAccessException {
         for (GameData game: data.gameList){
             if (game.gameID() == gameID){
-                GameData gameInfo = game;
 
                 if (Objects.equals(color, "WHITE")) {
                     if (game.whiteUsername() == null) {
                         data.gameList.remove(game);
-                        GameData new_game = new GameData(gameInfo.gameID(), username, gameInfo.blackUsername(), gameInfo.gameName(), gameInfo.game());
+                        GameData new_game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
                         data.gameList.add(new_game);
                     } else {
                         throw new DataAccessException("Error: already taken");
@@ -40,7 +39,7 @@ public class gameDOA {
                 } else if (Objects.equals(color, "BLACK")) {
                     if (game.blackUsername() == null) {
                         data.gameList.remove(game);
-                        GameData new_game = new GameData(gameInfo.gameID(), gameInfo.whiteUsername(), username, gameInfo.gameName(), gameInfo.game());
+                        GameData new_game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
                         data.gameList.add(new_game);
                     } else {
                         throw new DataAccessException("Error: already taken");

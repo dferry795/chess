@@ -37,14 +37,10 @@ public class userService {
 
     public AuthData login(String username, String password, memoryDB data) throws DataAccessException {
         if (userData.getUser(username, password, data) != null) {
-            while (true) {
-                String authToken = UUID.randomUUID().toString();
-                if (authData.getAuth(authToken, data) == null) {
-                    AuthData auth = new AuthData(authToken, username);
-                    authData.createAuth(auth, data);
-                    return auth;
-                }
-            }
+            String authToken = UUID.randomUUID().toString();
+                AuthData auth = new AuthData(authToken, username);
+                authData.createAuth(auth, data);
+                return auth;
         } else {
             throw new DataAccessException("Error: unauthorized");
         }
