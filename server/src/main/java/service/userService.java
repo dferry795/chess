@@ -10,21 +10,19 @@ public class userService {
 
     private final userDOA userData;
     private final authDOA authData;
-    private final gameDOA gameData;
 
-    public userService(){
-        this.userData = new userDOA();
-        this.authData = new authDOA();
-        this.gameData = new gameDOA();
+    public userService(userDOA user, authDOA auth){
+        this.userData = user;
+        this.authData = auth;
     }
-    public AuthData register(UserData user, memoryDB data) throws DataAccessException {
+    public AuthData register(UserData user) throws DataAccessException {
         if (user.username() != null && user.password() != null && user.email() != null) {
 
-            if (userData.getUser(user.username(), user.password(), data) == null) {
-                userData.createUser(user, data);
+            if (userData.getUser(user.username(), user.password()) == null) {
+                userData.createUser(user);
                 String authToken = UUID.randomUUID().toString();
                 AuthData auth = new AuthData(authToken, user.username());
-                authData.createAuth(auth, data);
+                authData.createAuth(auth);
                 return auth;
             } else {
                 throw new DataAccessException("Error: already taken");
@@ -34,21 +32,21 @@ public class userService {
         }
     }
 
-    public AuthData login(String username, String password, memoryDB data) throws DataAccessException {
-        if (userData.getUser(username, password, data) != null) {
+    public AuthData login(String username, String password) throws DataAccessException {
+        if (userData.getUser(username, password) != null) {
             String authToken = UUID.randomUUID().toString();
                 AuthData auth = new AuthData(authToken, username);
-                authData.createAuth(auth, data);
+                authData.createAuth(auth);
                 return auth;
         } else {
             throw new DataAccessException("Error: unauthorized");
         }
     }
 
-    public void logout(String authToken, memoryDB data) throws DataAccessException {
-        if (authToken != null && authData.getAuth(authToken, data) != null){
-            AuthData token = authData.getAuth(authToken, data);
-            authData.deleteAuth(token, data);
+    public void logout(String authToken) throws DataAccessException {
+        if (authToken != null && authData.getAuth(authToken) != null){
+            AuthData token = authData.getAuth(authToken);
+            authData.deleteAuth(token);
         } else {
             throw new DataAccessException("Error: unauthorized");
         }

@@ -2,15 +2,13 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import dataAccess.DataAccessException;
-import dataAccess.memoryDB;
+import dataAccess.*;
 import model.*;
 import service.authService;
 import service.userService;
 import service.gameService;
 import spark.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -19,14 +17,18 @@ public class Server {
 
     private final authService authServ;
     private final gameService gameServ;
-    private final memoryDB dataBase;
     private final userService userServ;
+    private final authDOA authDataAccess;
+    private final gameDOA gameDataAccess;
+    private final userDOA userDataAccess;
 
     public Server(){
-        this.dataBase = new memoryDB();
-        this.authServ = new authService();
-        this.gameServ = new gameService();
-        this.userServ = new userService();
+        this.authDataAccess = new authDOA();
+        this.gameDataAccess = new gameDOA();
+        this.userDataAccess = new userDOA();
+        this.authServ = new authService(userDataAccess, gameDataAccess, authDataAccess);
+        this.gameServ = new gameService(authDataAccess, gameDataAccess);
+        this.userServ = new userService(userDataAccess, authDataAccess);
     }
 
     public int run(int desiredPort) {
@@ -56,7 +58,7 @@ public class Server {
     private Object register(Request req, Response res){
         try {
             UserData user = new Gson().fromJson(req.body(), UserData.class);
-            AuthData auth = userServ.register(user, this.dataBase);
+            AuthData auth = userServ.register(user);
             return new Gson().toJson(auth);
         } catch (DataAccessException ex){
            return exeptionHandler(ex, req, res);
@@ -67,7 +69,7 @@ public class Server {
     private Object login(Request req, Response res){
         try {
             LoginRequest loginReq = new Gson().fromJson(req.body(), LoginRequest.class);
-            AuthData user_auth = userServ.login(loginReq.username(), loginReq.password(), this.dataBase);
+            AuthData user_auth = userServ.login(loginReq.username(), loginReq.password());
             return new Gson().toJson(user_auth);
         } catch (DataAccessException ex) {
             return exeptionHandler(ex, req, res);
@@ -77,7 +79,7 @@ public class Server {
     private Object logout(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
-            userServ.logout(authToken, this.dataBase);
+            userServ.logout(authToken);
             return new Gson().toJson(null);
         } catch (DataAccessException ex) {
             return exeptionHandler(ex, req, res);
@@ -87,7 +89,7 @@ public class Server {
     private Object listGames(Request req, Response res){
         try {
             String authToken = req.headers("Authorization");
-            var list = gameServ.listGames(authToken, this.dataBase);
+            var list = gameServ.listGames(authToken);
             HashSet<GameData> new_list = new HashSet<>(list);
             return new Gson().toJson(Map.of("games", new_list));
         } catch (DataAccessException ex){
@@ -103,7 +105,7 @@ public class Server {
             if (json.get("gameName") != null){
                 gameName = json.get("gameName").getAsString();
             }
-            var id = gameServ.createGame(gameName, authToken, this.dataBase);
+            var id = gameServ.createGame(gameName, authToken);
             String idString = Integer.toString(id);
             return new Gson().toJson(Map.of("gameID", idString));
         } catch (DataAccessException ex){
@@ -120,7 +122,7 @@ public class Server {
                 color = json.get("playerColor").getAsString();
             }
             int gameID = json.get("gameID").getAsInt();
-            gameServ.joinGame(color, gameID, authToken, this.dataBase);
+            gameServ.joinGame(color, gameID, authToken);
             return new Gson().toJson(null);
         } catch(DataAccessException ex){
             return exeptionHandler(ex, req, res);
@@ -128,7 +130,7 @@ public class Server {
     }
 
     private Object clearApplication(Request req, Response res){
-            authServ.clearApplication(this.dataBase);
+            authServ.clearApplication();
             return "{}";
     }
 

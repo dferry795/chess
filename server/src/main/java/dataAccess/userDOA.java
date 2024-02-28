@@ -2,11 +2,18 @@ package dataAccess;
 
 import model.UserData;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class userDOA {
-    public UserData getUser(String username, String password, memoryDB data){
-        for (UserData user: data.userList){
+
+    private final ArrayList<UserData> userList;
+
+    public userDOA(){
+        this.userList = new ArrayList<>();
+    }
+    public UserData getUser(String username, String password){
+        for (UserData user: this.userList){
             if (Objects.equals(user.username(), username) && Objects.equals(user.password(), password)){
                 return user;
             }
@@ -14,11 +21,11 @@ public class userDOA {
         return null;
     }
 
-    public void createUser(UserData user, memoryDB data){
-        data.userList.add(user);
+    public void createUser(UserData user){
+        this.userList.add(user);
     }
 
-    public void clear(memoryDB data){
-        data.userList.clear();
+    public void clear(){
+        this.userList.clear();
     }
 }

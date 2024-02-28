@@ -3,21 +3,26 @@ package dataAccess;
 import model.GameData;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Objects;
 
 public class gameDOA {
 
-    public ArrayList<GameData> listGames(memoryDB data){
-        return data.gameList;
+    private final ArrayList<GameData> gameList;
+
+    public gameDOA(){
+        this.gameList = new ArrayList<>();
     }
 
-    public void createGame(GameData game, memoryDB data){
-        data.gameList.add(game);
+    public ArrayList<GameData> listGames(){
+        return this.gameList;
     }
 
-    public GameData getGame(int gameID, memoryDB data){
-        for (GameData game: data.gameList){
+    public void createGame(GameData game){
+        this.gameList.add(game);
+    }
+
+    public GameData getGame(int gameID){
+        for (GameData game: this.gameList){
             if (game.gameID() == gameID){
                 return game;
             }
@@ -25,9 +30,9 @@ public class gameDOA {
         return null;
     }
 
-    public void updateGame(int gameID, String color, String username, memoryDB data) throws DataAccessException {
+    public void updateGame(int gameID, String color, String username) throws DataAccessException {
 
-        ArrayList<GameData> tempList = new ArrayList<>(data.gameList);
+        ArrayList<GameData> tempList = new ArrayList<>(this.gameList);
 
 
         for (GameData game: tempList){
@@ -35,17 +40,17 @@ public class gameDOA {
 
                 if (Objects.equals(color, "WHITE")) {
                     if (game.whiteUsername() == null) {
-                        data.gameList.remove(game);
+                        this.gameList.remove(game);
                         GameData new_game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-                        data.gameList.add(new_game);
+                        this.gameList.add(new_game);
                     } else {
                         throw new DataAccessException("Error: already taken");
                     }
                 } else if ("BLACK".equals(color)) {
                     if (game.blackUsername() == null) {
-                        data.gameList.remove(game);
+                        this.gameList.remove(game);
                         GameData new_game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-                        data.gameList.add(new_game);
+                        this.gameList.add(new_game);
                     } else {
                         throw new DataAccessException("Error: already taken");
                     }
@@ -54,7 +59,7 @@ public class gameDOA {
         }
     }
 
-    public void clear(memoryDB data){
-        data.gameList.clear();
+    public void clear(){
+        this.gameList.clear();
     }
 }

@@ -1,8 +1,6 @@
 package service;
 
-import dataAccess.memoryDB;
 import dataAccess.*;
-import model.AuthData;
 
 public class authService {
 
@@ -10,14 +8,14 @@ public class authService {
     private final gameDOA gameDataAccess;
     private final authDOA authDataAccess;
 
-    public authService(){
-        this.userDataAccess = new userDOA();
-        this.gameDataAccess = new gameDOA();
-        this.authDataAccess = new authDOA();
+    public authService(userDOA user, gameDOA game, authDOA auth){
+        this.userDataAccess = user;
+        this.gameDataAccess = game;
+        this.authDataAccess = auth;
     }
-    public void clearApplication(memoryDB data){
-        userDataAccess.clear(data);
-        gameDataAccess.clear(data);
-        authDataAccess.clear(data);
+    public void clearApplication(){
+        userDataAccess.clear();
+        gameDataAccess.clear();
+        authDataAccess.clear();
     }
 }
