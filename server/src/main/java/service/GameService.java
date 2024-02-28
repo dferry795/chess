@@ -7,12 +7,12 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class gameService {
+public class GameService {
 
     private final authDOA authDataAccess;
     private final gameDOA gameDataAccess;
 
-    public gameService(authDOA auth, gameDOA game) {
+    public GameService(authDOA auth, gameDOA game) {
         this.authDataAccess = auth;
         this.gameDataAccess = game;
     }

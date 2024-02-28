@@ -6,7 +6,7 @@ import dataAccess.*;
 import model.*;
 import service.authService;
 import service.userService;
-import service.gameService;
+import service.GameService;
 import spark.*;
 
 import java.util.HashSet;
@@ -16,7 +16,7 @@ import java.util.Objects;
 public class Server {
 
     private final authService authServ;
-    private final gameService gameServ;
+    private final GameService gameServ;
     private final userService userServ;
 
     public Server(){
@@ -24,7 +24,7 @@ public class Server {
         gameDOA gameDataAccess = new gameDOA();
         userDOA userDataAccess = new userDOA();
         this.authServ = new authService(userDataAccess, gameDataAccess, authDataAccess);
-        this.gameServ = new gameService(authDataAccess, gameDataAccess);
+        this.gameServ = new GameService(authDataAccess, gameDataAccess);
         this.userServ = new userService(userDataAccess, authDataAccess);
     }
 
