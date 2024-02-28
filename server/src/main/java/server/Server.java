@@ -21,14 +21,12 @@ public class Server {
     private final gameService gameServ;
     private final memoryDB dataBase;
     private final userService userServ;
-    private final ArrayList<AuthData> userAuth;
 
     public Server(){
         this.dataBase = new memoryDB();
         this.authServ = new authService();
         this.gameServ = new gameService();
         this.userServ = new userService();
-        this.userAuth = new ArrayList<>();
     }
 
     public int run(int desiredPort) {
@@ -55,11 +53,10 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object register(Request req, Response res) throws DataAccessException {
+    private Object register(Request req, Response res){
         try {
             UserData user = new Gson().fromJson(req.body(), UserData.class);
-            AuthData auth = userServ.register(user, dataBase);
-            this.userAuth.add(auth);
+            AuthData auth = userServ.register(user, this.dataBase);
             return new Gson().toJson(auth);
         } catch (DataAccessException ex){
            return exeptionHandler(ex, req, res);
@@ -67,11 +64,10 @@ public class Server {
 
     }
 
-    private Object login(Request req, Response res) throws DataAccessException {
+    private Object login(Request req, Response res){
         try {
             LoginRequest loginReq = new Gson().fromJson(req.body(), LoginRequest.class);
-            AuthData user_auth = userServ.login(loginReq.username(), loginReq.password(), dataBase);
-            this.userAuth.add(user_auth);
+            AuthData user_auth = userServ.login(loginReq.username(), loginReq.password(), this.dataBase);
             return new Gson().toJson(user_auth);
         } catch (DataAccessException ex) {
             return exeptionHandler(ex, req, res);
@@ -80,28 +76,34 @@ public class Server {
 
     private Object logout(Request req, Response res) {
         try {
-            userServ.logout(this.userAuth.getLast().authToken(), dataBase);
-            this.userAuth.removeLast();
+            String authToken = req.headers("Authorization");
+            userServ.logout(authToken, this.dataBase);
             return new Gson().toJson(null);
         } catch (DataAccessException ex) {
             return exeptionHandler(ex, req, res);
         }
     }
 
-    private Object listGames(Request req, Response res) throws DataAccessException {
+    private Object listGames(Request req, Response res){
         try {
-            var list = gameServ.listGames(this.userAuth.getLast().authToken(), dataBase);
-
-            return new Gson().toJson(Map.of("games", list));
+            String authToken = req.headers("Authorization");
+            var list = gameServ.listGames(authToken, this.dataBase);
+            HashSet<GameData> new_list = new HashSet<>(list);
+            return new Gson().toJson(Map.of("games", new_list));
         } catch (DataAccessException ex){
             return exeptionHandler(ex, req, res);
         }
     }
 
-    private Object createGame(Request req, Response res) throws DataAccessException {
+    private Object createGame(Request req, Response res){
         try {
-            var name = req.params(":GameName");
-            var id = gameServ.createGame(name, this.userAuth.getLast().authToken(), dataBase);
+            String authToken = req.headers("Authorization");
+            var json = new Gson().fromJson(req.body(), JsonObject.class);
+            String gameName = null;
+            if (json.get("gameName") != null){
+                gameName = json.get("gameName").getAsString();
+            }
+            var id = gameServ.createGame(gameName, authToken, this.dataBase);
             String idString = Integer.toString(id);
             return new Gson().toJson(Map.of("gameID", idString));
         } catch (DataAccessException ex){
@@ -109,10 +111,16 @@ public class Server {
         }
     }
 
-    private Object joinGame(Request req, Response res) throws DataAccessException {
+    private Object joinGame(Request req, Response res){
         try {
-            joinRequest joinReq = new Gson().fromJson(req.body(), joinRequest.class);
-            gameServ.joinGame(joinReq.playerColor(), joinReq.gameID(), this.userAuth.getLast(), dataBase);
+            String authToken = req.headers("Authorization");
+            var json = new Gson().fromJson(req.body(), JsonObject.class);
+            String color = null;
+            if (json.get("playerColor") != null){
+                color = json.get("playerColor").getAsString();
+            }
+            int gameID = json.get("gameID").getAsInt();
+            gameServ.joinGame(color, gameID, authToken, this.dataBase);
             return new Gson().toJson(null);
         } catch(DataAccessException ex){
             return exeptionHandler(ex, req, res);
@@ -120,8 +128,8 @@ public class Server {
     }
 
     private Object clearApplication(Request req, Response res){
-            authServ.clearApplication(dataBase);
-            return new Gson().toJson(null);
+            authServ.clearApplication(this.dataBase);
+            return "{}";
     }
 
     private Object exeptionHandler(DataAccessException ex, Request req, Response res) {

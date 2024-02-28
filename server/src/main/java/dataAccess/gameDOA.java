@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Objects;
 
 public class gameDOA {
+
     public ArrayList<GameData> listGames(memoryDB data){
         return data.gameList;
     }
@@ -25,7 +26,11 @@ public class gameDOA {
     }
 
     public void updateGame(int gameID, String color, String username, memoryDB data) throws DataAccessException {
-        for (GameData game: data.gameList){
+
+        ArrayList<GameData> tempList = new ArrayList<>(data.gameList);
+
+
+        for (GameData game: tempList){
             if (game.gameID() == gameID){
 
                 if (Objects.equals(color, "WHITE")) {
@@ -36,7 +41,7 @@ public class gameDOA {
                     } else {
                         throw new DataAccessException("Error: already taken");
                     }
-                } else if (Objects.equals(color, "BLACK")) {
+                } else if ("BLACK".equals(color)) {
                     if (game.blackUsername() == null) {
                         data.gameList.remove(game);
                         GameData new_game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());

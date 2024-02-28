@@ -6,9 +6,9 @@ import java.util.Objects;
 
 public class authDOA {
     public AuthData getAuth(String authToken, memoryDB data){
-        for (AuthData auth: data.authList){
-            if (Objects.equals(authToken, auth.authToken())){
-                return auth;
+        for (AuthData token: data.authList){
+            if (Objects.equals(authToken, token.authToken())){
+                return token;
             }
         }
         return null;

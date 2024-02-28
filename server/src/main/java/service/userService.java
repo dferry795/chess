@@ -4,7 +4,6 @@ import dataAccess.*;
 import model.AuthData;
 import model.UserData;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class userService {
@@ -46,9 +45,9 @@ public class userService {
         }
     }
 
-    public void logout(String auth, memoryDB data) throws DataAccessException {
-        if (authData.getAuth(auth, data) != null){
-            AuthData token = authData.getAuth(auth, data);
+    public void logout(String authToken, memoryDB data) throws DataAccessException {
+        if (authToken != null && authData.getAuth(authToken, data) != null){
+            AuthData token = authData.getAuth(authToken, data);
             authData.deleteAuth(token, data);
         } else {
             throw new DataAccessException("Error: unauthorized");
