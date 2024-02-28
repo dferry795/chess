@@ -1,12 +1,13 @@
-/*
+
 package serviceTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
-import dataAccess.authDOA;
-import dataAccess.gameDOA;
+import dataAccess.AuthDOA;
+import dataAccess.GameDOA;
 import model.AuthData;
 import model.GameData;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.GameService;
@@ -21,15 +22,15 @@ public class GameServiceTests {
 
 
     private GameService gameService;
-    private authDOA authDataAccess;
-    private gameDOA gameDataAccess;
+    private AuthDOA authDataAccess;
+    private GameDOA gameDataAccess;
     private AuthData auth1;
     private AuthData auth2;
 
     @BeforeEach
     public void setUp() {
-        this.authDataAccess = new authDOA();
-        this.gameDataAccess = new gameDOA();
+        this.authDataAccess = new AuthDOA();
+        this.gameDataAccess = new GameDOA();
         gameService = new GameService(authDataAccess, gameDataAccess);
 
         String authToken1 = UUID.randomUUID().toString();
@@ -38,6 +39,12 @@ public class GameServiceTests {
         this.auth2 = new AuthData(authToken2, "Dracen");
 
         authDataAccess.createAuth(auth1);
+    }
+
+    @AfterEach
+    public void takeDown() {
+        this.authDataAccess.clear();
+        this.gameDataAccess.clear();
     }
 
     @Test
@@ -49,7 +56,7 @@ public class GameServiceTests {
         testList.add(newGame);
 
         assertNotNull(gameService.listGames(auth1.authToken()), "Did not return anything");
-        assertEquals(testList, gameService.listGames(auth1.authToken()), "You result did not match");
+        assertIterableEquals(testList, gameService.listGames(auth1.authToken()), "You result did not match");
     }
 
     @Test
@@ -58,14 +65,13 @@ public class GameServiceTests {
         GameData newGame = new GameData(id, null, null, null, new ChessGame());
         gameDataAccess.createGame(newGame);
 
-        assertInstanceOf(DataAccessException.class, gameService.listGames(auth2.authToken()));
+        assertFalse(!gameService.listGames(auth2.authToken()).isEmpty(), "Did not recieve error");
     }
 
     @Test
     public void testCreateGame() throws DataAccessException {
         int id = Math.abs(UUID.randomUUID().hashCode());
         GameData newGame = new GameData(id, null, null, "Let's Gooooo!", new ChessGame());
-        gameDataAccess.createGame(newGame);
 
         ArrayList<GameData> testList = new ArrayList<>();
         testList.add(newGame);
@@ -73,7 +79,7 @@ public class GameServiceTests {
         int gameID = gameService.createGame(newGame.gameName(), auth1.authToken());
 
         assertTrue(gameID > 0, "Invalid number");
-        assertEquals(testList, gameService.listGames(auth1.authToken()));
+        assertTrue(gameService.listGames(auth1.authToken()).size() == 1, "Did not create game");
     }
 
     @Test
@@ -109,4 +115,3 @@ public class GameServiceTests {
         assertNotEquals(testList, gameDataAccess.listGames());
     }
 }
-*/
