@@ -2,13 +2,13 @@ package service;
 
 import dataAccess.*;
 
-public class authService {
+public class AuthService {
 
-    private final userDOA userDataAccess;
-    private final gameDOA gameDataAccess;
-    private final authDOA authDataAccess;
+    private final UserDOA userDataAccess;
+    private final GameDOA gameDataAccess;
+    private final AuthDOA authDataAccess;
 
-    public authService(userDOA user, gameDOA game, authDOA auth){
+    public AuthService(UserDOA user, GameDOA game, AuthDOA auth){
         this.userDataAccess = user;
         this.gameDataAccess = game;
         this.authDataAccess = auth;

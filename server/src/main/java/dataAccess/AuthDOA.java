@@ -5,11 +5,11 @@ import model.AuthData;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class authDOA {
+public class AuthDOA {
 
     private final ArrayList<AuthData> authList;
 
-    public authDOA(){
+    public AuthDOA(){
         this.authList = new ArrayList<>();
     }
     public AuthData getAuth(String authToken){

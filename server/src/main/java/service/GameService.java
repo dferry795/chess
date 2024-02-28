@@ -9,10 +9,10 @@ import java.util.UUID;
 
 public class GameService {
 
-    private final authDOA authDataAccess;
-    private final gameDOA gameDataAccess;
+    private final AuthDOA authDataAccess;
+    private final GameDOA gameDataAccess;
 
-    public GameService(authDOA auth, gameDOA game) {
+    public GameService(AuthDOA auth, GameDOA game) {
         this.authDataAccess = auth;
         this.gameDataAccess = game;
     }

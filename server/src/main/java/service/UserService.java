@@ -6,12 +6,12 @@ import model.UserData;
 
 import java.util.UUID;
 
-public class userService {
+public class UserService {
 
-    private final userDOA userData;
-    private final authDOA authData;
+    private final UserDOA userData;
+    private final AuthDOA authData;
 
-    public userService(userDOA user, authDOA auth){
+    public UserService(UserDOA user, AuthDOA auth){
         this.userData = user;
         this.authData = auth;
     }

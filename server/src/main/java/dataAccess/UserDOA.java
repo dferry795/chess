@@ -5,11 +5,11 @@ import model.UserData;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class userDOA {
+public class UserDOA {
 
     private final ArrayList<UserData> userList;
 
-    public userDOA(){
+    public UserDOA(){
         this.userList = new ArrayList<>();
     }
     public UserData getUser(String username, String password){

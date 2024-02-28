@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataAccess.*;
 import model.*;
-import service.authService;
-import service.userService;
+import service.AuthService;
+import service.UserService;
 import service.GameService;
 import spark.*;
 
@@ -15,17 +15,17 @@ import java.util.Objects;
 
 public class Server {
 
-    private final authService authServ;
+    private final AuthService authServ;
     private final GameService gameServ;
-    private final userService userServ;
+    private final UserService userServ;
 
     public Server(){
-        authDOA authDataAccess = new authDOA();
-        gameDOA gameDataAccess = new gameDOA();
-        userDOA userDataAccess = new userDOA();
-        this.authServ = new authService(userDataAccess, gameDataAccess, authDataAccess);
+        AuthDOA authDataAccess = new AuthDOA();
+        GameDOA gameDataAccess = new GameDOA();
+        UserDOA userDataAccess = new UserDOA();
+        this.authServ = new AuthService(userDataAccess, gameDataAccess, authDataAccess);
         this.gameServ = new GameService(authDataAccess, gameDataAccess);
-        this.userServ = new userService(userDataAccess, authDataAccess);
+        this.userServ = new UserService(userDataAccess, authDataAccess);
     }
 
     public int run(int desiredPort) {

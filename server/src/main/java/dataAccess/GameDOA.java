@@ -5,11 +5,11 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class gameDOA {
+public class GameDOA {
 
     private final ArrayList<GameData> gameList;
 
-    public gameDOA(){
+    public GameDOA(){
         this.gameList = new ArrayList<>();
     }
 
