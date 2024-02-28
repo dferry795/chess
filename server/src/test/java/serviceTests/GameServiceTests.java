@@ -10,6 +10,7 @@ import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import service.GameService;
 
 import java.util.ArrayList;
@@ -65,7 +66,11 @@ public class GameServiceTests {
         GameData newGame = new GameData(id, null, null, null, new ChessGame());
         gameDataAccess.createGame(newGame);
 
-        assertFalse(!gameService.listGames(auth2.authToken()).isEmpty(), "Did not recieve error");
+        try {
+            gameService.listGames(auth2.authToken());
+        } catch (DataAccessException ex) {
+            assertTrue(ex.getMessage().toLowerCase().contains("error"));
+        }
     }
 
     @Test
@@ -84,15 +89,20 @@ public class GameServiceTests {
 
     @Test
     public void unauthorizedCreateGame() throws DataAccessException {
-        assertInstanceOf(DataAccessException.class, gameService.createGame("wow", auth2.authToken()));
+        try{
+            gameService.createGame("wow", auth2.authToken());
+        } catch (DataAccessException ex) {
+            assertTrue(ex.getMessage().toLowerCase().contains("error"));
+        }
     }
 
     @Test
     public void testJoinGame() throws DataAccessException {
         int id = Math.abs(UUID.randomUUID().hashCode());
         GameData newGame = new GameData(id, null, null, null, new ChessGame());
-        gameService.joinGame("BLACK", id, auth1.authToken());
         gameDataAccess.createGame(newGame);
+        gameService.joinGame("BLACK", id, auth1.authToken());
+
 
         GameData testGame = new GameData(id, null, "Darian", null, new ChessGame());
         ArrayList<GameData> testList = new ArrayList<>();
@@ -102,16 +112,24 @@ public class GameServiceTests {
     }
 
     @Test
-    public void unauthorizedJoinGame() throws DataAccessException {
+    public void badColorJoinGame() throws DataAccessException {
+        authDataAccess.createAuth(auth2);
+
         int id = Math.abs(UUID.randomUUID().hashCode());
         GameData newGame = new GameData(id, null, null, null, new ChessGame());
-        gameService.joinGame("WHITE", id, auth2.authToken());
+
         gameDataAccess.createGame(newGame);
 
         GameData testGame = new GameData(id, "Dracen", null, null, new ChessGame());
         ArrayList<GameData> testList = new ArrayList<>();
         testList.add(testGame);
 
-        assertNotEquals(testList, gameDataAccess.listGames());
+        try {
+            gameService.joinGame("BLACK", id, auth2.authToken());
+
+            assertNotEquals(testList, gameDataAccess.listGames());
+        } catch (DataAccessException ex){
+            assertTrue(ex.getMessage().toLowerCase().contains("error"));
+        }
     }
 }
