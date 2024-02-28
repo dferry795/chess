@@ -18,14 +18,11 @@ public class Server {
     private final authService authServ;
     private final gameService gameServ;
     private final userService userServ;
-    private final authDOA authDataAccess;
-    private final gameDOA gameDataAccess;
-    private final userDOA userDataAccess;
 
     public Server(){
-        this.authDataAccess = new authDOA();
-        this.gameDataAccess = new gameDOA();
-        this.userDataAccess = new userDOA();
+        authDOA authDataAccess = new authDOA();
+        gameDOA gameDataAccess = new gameDOA();
+        userDOA userDataAccess = new userDOA();
         this.authServ = new authService(userDataAccess, gameDataAccess, authDataAccess);
         this.gameServ = new gameService(authDataAccess, gameDataAccess);
         this.userServ = new userService(userDataAccess, authDataAccess);
