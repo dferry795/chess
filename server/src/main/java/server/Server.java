@@ -68,8 +68,10 @@ public class Server {
 
     private Object login(Request req, Response res){
         try {
-            LoginRequest loginReq = new Gson().fromJson(req.body(), LoginRequest.class);
-            AuthData user_auth = userServ.login(loginReq.username(), loginReq.password());
+            var json = new Gson().fromJson(req.body(), JsonObject.class);
+            String username = json.get("username").getAsString();
+            String password = json.get("password").getAsString();
+            AuthData user_auth = userServ.login(username, password);
             return new Gson().toJson(user_auth);
         } catch (DataAccessException ex) {
             return exeptionHandler(ex, req, res);
