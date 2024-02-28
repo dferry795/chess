@@ -52,6 +52,15 @@ public class GameServiceTests {
     }
 
     @Test
+    public void unauthListGames() throws DataAccessException{
+        int id = Math.abs(UUID.randomUUID().hashCode());
+        GameData newGame = new GameData(id, null, null, null, new ChessGame());
+        gameDataAccess.createGame(newGame);
+
+        assertInstanceOf(DataAccessException.class, gameService.listGames(auth2.authToken()));
+    }
+
+    @Test
     public void testCreateGame() throws DataAccessException {
         int id = Math.abs(UUID.randomUUID().hashCode());
         GameData newGame = new GameData(id, null, null, "Let's Gooooo!", new ChessGame());
@@ -67,6 +76,11 @@ public class GameServiceTests {
     }
 
     @Test
+    public void unauthorizedCreateGame() throws DataAccessException {
+        assertInstanceOf(DataAccessException.class, gameService.createGame("wow", auth2.authToken()));
+    }
+
+    @Test
     public void testJoinGame() throws DataAccessException {
         int id = Math.abs(UUID.randomUUID().hashCode());
         GameData newGame = new GameData(id, null, null, null, new ChessGame());
@@ -78,5 +92,19 @@ public class GameServiceTests {
         testList.add(testGame);
 
         assertEquals(testList, gameDataAccess.listGames());
+    }
+
+    @Test
+    public void unauthorizedJoinGame() throws DataAccessException {
+        int id = Math.abs(UUID.randomUUID().hashCode());
+        GameData newGame = new GameData(id, null, null, null, new ChessGame());
+        gameService.joinGame("WHITE", id, auth2.authToken());
+        gameDataAccess.createGame(newGame);
+
+        GameData testGame = new GameData(id, "Dracen", null, null, new ChessGame());
+        ArrayList<GameData> testList = new ArrayList<>();
+        testList.add(testGame);
+
+        assertNotEquals(testList, gameDataAccess.listGames());
     }
 }
