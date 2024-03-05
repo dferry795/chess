@@ -4,6 +4,7 @@ import dataAccess.*;
 import model.AuthData;
 import model.UserData;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class UserService {
@@ -15,7 +16,7 @@ public class UserService {
         this.userData = user;
         this.authData = auth;
     }
-    public AuthData register(UserData user) throws DataAccessException {
+    public AuthData register(UserData user) throws DataAccessException, SQLException {
         if (user.username() != null && user.password() != null && user.email() != null) {
 
             if (userData.getUser(user.username(), user.password()) == null) {
