@@ -2,11 +2,11 @@ package dataAccess;
 
 import model.UserData;
 
-public class UserDataInterface {
+public interface UserDataInterface {
+     Object getUser(String username, String password);
 
-    public interface UserDataInterface {
-        UserData getUser(String username, String password);
+    void createUser(UserData user);
 
+    void clear();
 
-    }
 }
