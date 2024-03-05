@@ -23,7 +23,7 @@ public class Server {
     public Server(){
         MemoryAuthDOA authDataAccess = new MemoryAuthDOA();
         MemoryGameDOA gameDataAccess = new MemoryGameDOA();
-        UserDataInterface userDataAccess = new UserDataInterface();
+        UserDataInterface userDataAccess = new SqlUserDOA();
         this.authServ = new AuthService(userDataAccess, gameDataAccess, authDataAccess);
         this.gameServ = new GameService(authDataAccess, gameDataAccess);
         this.userServ = new UserService(userDataAccess, authDataAccess);

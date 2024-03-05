@@ -5,13 +5,10 @@ import model.AuthData;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class MemoryAuthDOA {
+public class MemoryAuthDOA  implements AuthDataInterface{
 
-    private final ArrayList<AuthData> authList;
+    private final ArrayList<AuthData> authList  = new ArrayList<>();
 
-    public MemoryAuthDOA(){
-        this.authList = new ArrayList<>();
-    }
     public AuthData getAuth(String authToken){
         for (AuthData token: this.authList){
             if (Objects.equals(authToken, token.authToken())){
