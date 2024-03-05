@@ -3,14 +3,13 @@ package serviceTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
-import dataAccess.AuthDOA;
-import dataAccess.GameDOA;
+import dataAccess.MemoryAuthDOA;
+import dataAccess.MemoryGameDOA;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import service.GameService;
 
 import java.util.ArrayList;
@@ -23,15 +22,15 @@ public class GameServiceTests {
 
 
     private GameService gameService;
-    private AuthDOA authDataAccess;
-    private GameDOA gameDataAccess;
+    private MemoryAuthDOA authDataAccess;
+    private MemoryGameDOA gameDataAccess;
     private AuthData auth1;
     private AuthData auth2;
 
     @BeforeEach
     public void setUp() {
-        this.authDataAccess = new AuthDOA();
-        this.gameDataAccess = new GameDOA();
+        this.authDataAccess = new MemoryAuthDOA();
+        this.gameDataAccess = new MemoryGameDOA();
         gameService = new GameService(authDataAccess, gameDataAccess);
 
         String authToken1 = UUID.randomUUID().toString();

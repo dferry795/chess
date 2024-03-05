@@ -9,6 +9,7 @@ import service.UserService;
 import service.GameService;
 import spark.*;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -20,9 +21,9 @@ public class Server {
     private final UserService userServ;
 
     public Server(){
-        AuthDOA authDataAccess = new AuthDOA();
-        GameDOA gameDataAccess = new GameDOA();
-        UserDOA userDataAccess = new UserDOA();
+        MemoryAuthDOA authDataAccess = new MemoryAuthDOA();
+        MemoryGameDOA gameDataAccess = new MemoryGameDOA();
+        MemoryUserDOA userDataAccess = new MemoryUserDOA();
         this.authServ = new AuthService(userDataAccess, gameDataAccess, authDataAccess);
         this.gameServ = new GameService(authDataAccess, gameDataAccess);
         this.userServ = new UserService(userDataAccess, authDataAccess);
@@ -59,6 +60,8 @@ public class Server {
             return new Gson().toJson(auth);
         } catch (DataAccessException ex){
            return exeptionHandler(ex, req, res);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
     }

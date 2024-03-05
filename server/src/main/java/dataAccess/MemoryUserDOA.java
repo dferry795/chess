@@ -1,6 +1,7 @@
 package dataAccess;
 
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,11 +10,11 @@ import java.util.Objects;
 import static dataAccess.DatabaseManager.createDatabase;
 import static dataAccess.DatabaseManager.getConnection;
 
-public class UserDOA {
+public class MemoryUserDOA implements UserDataInterface {
 
     private final ArrayList<UserData> userList;
 
-    public UserDOA(){
+    public MemoryUserDOA(){
         this.userList = new ArrayList<>();
     }
     public UserData getUser(String username, String password){
@@ -46,7 +47,11 @@ public class UserDOA {
 
             try (var preparedStatement = con.prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?)")) {
                 preparedStatement.setString(1, user.username());
-                preparedStatement.setString(2, user.password());
+
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                String hashedPassword = encoder.encode(user.password());
+
+                preparedStatement.setString(2, hashedPassword);
                 preparedStatement.setString(3, user.email());
 
                 preparedStatement.executeUpdate();
@@ -56,5 +61,7 @@ public class UserDOA {
 
     public void clear(){
         this.userList.clear();
+
+
     }
 }

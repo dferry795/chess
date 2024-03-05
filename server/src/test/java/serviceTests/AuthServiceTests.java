@@ -1,10 +1,10 @@
 package serviceTests;
 
 import chess.ChessGame;
-import dataAccess.AuthDOA;
+import dataAccess.MemoryAuthDOA;
 import dataAccess.DataAccessException;
-import dataAccess.GameDOA;
-import dataAccess.UserDOA;
+import dataAccess.MemoryGameDOA;
+import dataAccess.MemoryUserDOA;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -13,21 +13,23 @@ import org.junit.jupiter.api.Test;
 import service.AuthService;
 import service.UserService;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthServiceTests {
 
-    private UserDOA userDataAccess;
-    private AuthDOA authDataAccess;
-    private GameDOA gameDataAccess;
+    private MemoryUserDOA userDataAccess;
+    private MemoryAuthDOA authDataAccess;
+    private MemoryGameDOA gameDataAccess;
     private AuthService authService;
     private UserService userService;
 
     @BeforeEach
-    public void setup(){
-        this.userDataAccess = new UserDOA();
-        this.authDataAccess = new AuthDOA();
-        this.gameDataAccess = new GameDOA();
+    public void setup() throws SQLException, DataAccessException {
+        this.userDataAccess = new MemoryUserDOA();
+        this.authDataAccess = new MemoryAuthDOA();
+        this.gameDataAccess = new MemoryGameDOA();
         authService = new AuthService(userDataAccess, gameDataAccess, authDataAccess);
         userService = new UserService(userDataAccess, authDataAccess);
 

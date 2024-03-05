@@ -4,11 +4,11 @@ import dataAccess.*;
 
 public class AuthService {
 
-    private final UserDOA userDataAccess;
-    private final GameDOA gameDataAccess;
-    private final AuthDOA authDataAccess;
+    private final MemoryUserDOA userDataAccess;
+    private final MemoryGameDOA gameDataAccess;
+    private final MemoryAuthDOA authDataAccess;
 
-    public AuthService(UserDOA user, GameDOA game, AuthDOA auth){
+    public AuthService(MemoryUserDOA user, MemoryGameDOA game, MemoryAuthDOA auth){
         this.userDataAccess = user;
         this.gameDataAccess = game;
         this.authDataAccess = auth;

@@ -1,8 +1,8 @@
 package serviceTests;
 
-import dataAccess.AuthDOA;
+import dataAccess.MemoryAuthDOA;
 import dataAccess.DataAccessException;
-import dataAccess.UserDOA;
+import dataAccess.MemoryUserDOA;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
@@ -10,18 +10,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
 
-    private UserDOA userDataAccess;
-    private AuthDOA authDataAccess;
+    private MemoryUserDOA userDataAccess;
+    private MemoryAuthDOA authDataAccess;
     private UserService userService;
 
     @BeforeEach
     public void setup(){
-        this.userDataAccess = new UserDOA();
-        this.authDataAccess = new AuthDOA();
+        this.userDataAccess = new MemoryUserDOA();
+        this.authDataAccess = new MemoryAuthDOA();
         userService = new UserService(userDataAccess, authDataAccess);
     }
 
@@ -32,7 +34,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void testRegister() throws DataAccessException {
+    public void testRegister() throws DataAccessException, SQLException {
         UserData newUser = new UserData("Derbear", "1234", "anon@gmail.com");
 
         assertNotNull(userService.register(newUser));
@@ -40,7 +42,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void usernameTaken() throws DataAccessException{
+    public void usernameTaken() throws DataAccessException, SQLException {
         UserData newUser = new UserData("Derbear", "1234", "anon@gmail.com");
         userService.register(newUser);
 
@@ -52,7 +54,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void testLogin() throws DataAccessException{
+    public void testLogin() throws DataAccessException, SQLException {
         UserData newUser = new UserData("Derbear", "1234", "anon@gmail.com");
         userService.register(newUser);
 
@@ -63,7 +65,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void forgotPassword() throws DataAccessException{
+    public void forgotPassword() throws DataAccessException, SQLException {
         UserData newUser = new UserData("Derbear", "1234", "anon@gmail.com");
         userService.register(newUser);
 
@@ -76,7 +78,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void testLogout() throws DataAccessException{
+    public void testLogout() throws DataAccessException, SQLException {
         UserData newUser = new UserData("Derbear", "1234", "anon@gmail.com");
         AuthData auth = userService.register(newUser);
 
@@ -86,7 +88,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void invalidLogout() throws DataAccessException{
+    public void invalidLogout() throws DataAccessException, SQLException {
         UserData newUser = new UserData("Derbear", "1234", "anon@gmail.com");
         AuthData auth = userService.register(newUser);
 
