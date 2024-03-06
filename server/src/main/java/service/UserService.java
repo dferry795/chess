@@ -10,9 +10,9 @@ import java.util.UUID;
 public class UserService {
 
     private final UserDataInterface userData;
-    private final MemoryAuthDOA authData;
+    private final AuthDataInterface authData;
 
-    public UserService(UserDataInterface user, MemoryAuthDOA auth){
+    public UserService(UserDataInterface user, AuthDataInterface auth){
         this.userData = user;
         this.authData = auth;
     }

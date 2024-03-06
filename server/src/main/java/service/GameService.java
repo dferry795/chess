@@ -9,10 +9,10 @@ import java.util.UUID;
 
 public class GameService {
 
-    private final MemoryAuthDOA authDataAccess;
-    private final MemoryGameDOA gameDataAccess;
+    private final AuthDataInterface authDataAccess;
+    private final GameDataInterface gameDataAccess;
 
-    public GameService(MemoryAuthDOA auth, MemoryGameDOA game) {
+    public GameService(AuthDataInterface auth, GameDataInterface game) {
         this.authDataAccess = auth;
         this.gameDataAccess = game;
     }
@@ -41,7 +41,20 @@ public class GameService {
             if (authToken != null && authDataAccess.getAuth(authToken) != null) {
                 if (gameDataAccess.getGame(gameID) != null) {
                     String username = authDataAccess.getAuth(authToken).username();
-                    gameDataAccess.updateGame(gameID, color, username);
+
+                    if ("WHITE".equals(color)) {
+                        if (gameDataAccess.getGame(gameID).whiteUsername() == null) {
+                            gameDataAccess.whiteUpdateGame(gameID, username);
+                        } else {
+                            throw new DataAccessException("Error: already taken");
+                        }
+                    } else if ("BLACK".equals(color)) {
+                        if (gameDataAccess.getGame(gameID).blackUsername() == null) {
+                            gameDataAccess.blackUpdateGame(gameID, username);
+                        } else {
+                            throw new DataAccessException("Error: already taken");
+                        }
+                    }
                 } else {
                     throw new DataAccessException("Error: bad request");
                 }

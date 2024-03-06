@@ -12,12 +12,15 @@ import java.util.Objects;
 import static dataAccess.DatabaseManager.createDatabase;
 import static dataAccess.DatabaseManager.getConnection;
 
-public class SqlGameDOA {
+public class SqlGameDOA implements GameDataInterface{
+    public SqlGameDOA(){
+        configure();
+    }
     public ArrayList<GameData> listGames(){
         ArrayList<GameData> games = new ArrayList<>();
 
         try (var con = DatabaseManager.getConnection()){
-            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game";
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, gameState FROM game";
             try (var ps = con.prepareStatement(statement)){
                 try (var rs = ps.executeQuery()){
                     while (rs.next()){
@@ -70,6 +73,34 @@ public class SqlGameDOA {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    public void whiteUpdateGame(int gameID, String username){
+        try (var con = DatabaseManager.getConnection()){
+            var statement = "UPDATE game SET whiteUsername=? WHERE gameID=?";
+            try (var ps = con.prepareStatement(statement)){
+                ps.setString(1, username);
+                ps.setInt(2, gameID);
+
+                ps.executeUpdate();
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void blackUpdateGame(int gameID, String username){
+        try (var con = DatabaseManager.getConnection()){
+            var statement = "UPDATE game SET blackUsername=? WHERE gameID=?";
+            try (var ps = con.prepareStatement(statement)){
+                ps.setString(1, username);
+                ps.setInt(2, gameID);
+
+                ps.executeUpdate();
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void updateGame(int gameID, String color, String username) throws DataAccessException{
@@ -135,7 +166,7 @@ public class SqlGameDOA {
                whiteUsername varchar(255) DEFAULT NULL,
                blackUsername varchar(255) DEFAULT NULL,
                gameName varchar(255) DEFAULT NULL,
-               gameState varchar(255) NOT NULL
+               gameState longtext NOT NULL
            )""";
 
 
