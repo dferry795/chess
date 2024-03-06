@@ -10,16 +10,19 @@ import static dataAccess.DatabaseManager.getConnection;
 
 public class SqlUserDOA implements UserDataInterface{
 
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     public UserData getUser(String username, String password) {
         try (var con = DatabaseManager.getConnection()){
-            var statement = "SELECT username, password, email FROM user WHERE username=?, password=?";
+            var statement = "SELECT username, password, email FROM user WHERE username=?";
             try (var ps = con.prepareStatement(statement)){
                 ps.setString(1, username);
-                ps.setString(2, password);
 
                 try (var rs = ps.executeQuery()){
                     if (rs.next()){
-                        return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
+                        if (encoder.matches(password, rs.getString("password"))) {
+                            return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
+                        }
                     }
                 }
             }
@@ -53,8 +56,6 @@ public class SqlUserDOA implements UserDataInterface{
             try (var preparedStatement = con.prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?)")) {
                 preparedStatement.setString(1, user.username());
 
-
-                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
                 String hashedPassword = encoder.encode(user.password());
 
 

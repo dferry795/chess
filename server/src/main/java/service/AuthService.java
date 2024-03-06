@@ -8,7 +8,7 @@ public class AuthService {
     private final MemoryGameDOA gameDataAccess;
     private final MemoryAuthDOA authDataAccess;
 
-    public AuthService(UserDataInterface user, MemoryGameDOA game, MemoryAuthDOA auth){
+    public AuthService(UserDataInterface user, GameDataInterface game, AuthDataInterface auth){
         this.userDataAccess = user;
         this.gameDataAccess = game;
         this.authDataAccess = auth;

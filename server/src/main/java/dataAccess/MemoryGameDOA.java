@@ -7,11 +7,7 @@ import java.util.Objects;
 
 public class MemoryGameDOA {
 
-    private final ArrayList<GameData> gameList;
-
-    public MemoryGameDOA(){
-        this.gameList = new ArrayList<>();
-    }
+    private final ArrayList<GameData> gameList = new ArrayList<>();
 
     public ArrayList<GameData> listGames(){
         return this.gameList;
