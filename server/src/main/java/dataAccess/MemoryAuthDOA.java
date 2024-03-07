@@ -20,6 +20,11 @@ public class MemoryAuthDOA  implements AuthDataInterface{
     }
 
     public void createAuth(AuthData auth){
+        for (AuthData token: this.authList){
+            if (auth.authToken() == token.authToken()){
+                return;
+            }
+        }
         this.authList.add(auth);
     }
 

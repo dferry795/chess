@@ -1,22 +1,23 @@
 package dataAccessTests;
 
 import dataAccess.AuthDataInterface;
+import dataAccess.MemoryAuthDOA;
 import dataAccess.MemoryUserDOA;
 import dataAccess.UserDataInterface;
+import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthDataAccessTests {
     private AuthDataInterface authDataAcces;
 
     @BeforeEach
     public void setup(){
-        this.authDataAcces = new MemoryUserDOA();
+        this.authDataAcces = new MemoryAuthDOA();
 
         authDataAcces.clear();
     }
@@ -27,53 +28,52 @@ public class AuthDataAccessTests {
     }
 
     @Test
-    public void addUserTest(){
-        UserData newUser = new UserData("Bob", "1234", "anon@gmail.com");
+    public void addAuthTest(){
+        AuthData newAuth = new AuthData("token", "Joseph");
 
-        userDataAcces.createUser(newUser);
+        authDataAcces.createAuth(newAuth);
 
-        assertNotNull(userDataAcces.getUser(newUser.username(), newUser.password()), "Invalid Syntax");
+        assertNotNull(authDataAcces.getAuth("token"));
     }
 
     @Test
-    public void addUserTwice(){
-        UserData newUser = new UserData("Bob", "1234", "anon@gmail.com");
-        UserData newUser2 = new UserData("Bob", "5678", "anon@gmail.com");
+    public void addAuthTwice(){
+        AuthData newAuth = new AuthData("token", "Joseph");
+        AuthData newAuth2 = new AuthData("token", "Jared");
 
+        authDataAcces.createAuth(newAuth);
+        authDataAcces.createAuth(newAuth2);
 
-        userDataAcces.createUser(newUser);
-        userDataAcces.createUser(newUser2);
-
-        assertNotNull(userDataAcces.getUser(newUser.username(), newUser.password()));
-        assertNull(userDataAcces.getUser(newUser2.username(), newUser2.password()));
+        assertTrue(authDataAcces.getAuth("token").username() == "Joseph");
+        assertFalse(authDataAcces.getAuth("token").username() == "Jared");
     }
 
     @Test
-    public void getUserTest(){
-        UserData newUser = new UserData("Bob", "1234", "anon@gmail.com");
+    public void getAuthTest(){
+        AuthData newAuth = new AuthData("token", "Joseph");
 
-        userDataAcces.createUser(newUser);
+        authDataAcces.createAuth(newAuth);
 
-        assertNotNull(userDataAcces.getUser(newUser.username(), newUser.password()), "Invalid Syntax");
+        assertNotNull(authDataAcces.getAuth("token"));
     }
 
     @Test
-    public void wrongPassword(){
-        UserData newUser = new UserData("Bob", "1234", "anon@gmail.com");
+    public void wrongToken(){
+        AuthData newAuth = new AuthData("token", "Joseph");
 
-        userDataAcces.createUser(newUser);
+        authDataAcces.createAuth(newAuth);
 
-        assertNull(userDataAcces.getUser(newUser.username(), "890"), "Invalid Syntax");
+        assertNull(authDataAcces.getAuth("tok3n"));
     }
 
     @Test
     public void clearTest(){
-        UserData newUser = new UserData("Bob", "1234", "anon@gmail.com");
+        AuthData newAuth = new AuthData("token", "Joseph");
 
-        userDataAcces.createUser(newUser);
-        assertNotNull(userDataAcces.getUser(newUser.username(), newUser.password()), "Didn't add user");
+        authDataAcces.createAuth(newAuth);
+        assertNotNull(authDataAcces.getAuth("token"));
 
-        userDataAcces.clear();
-        assertNull(userDataAcces.getUser(newUser.username(), newUser.password()), "Invalid Syntax");
+        authDataAcces.clear();
+        assertNull(authDataAcces.getAuth("token"));
     }
 }
