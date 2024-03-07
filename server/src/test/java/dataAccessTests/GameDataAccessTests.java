@@ -4,6 +4,7 @@ import chess.*;
 import com.google.gson.Gson;
 import dataAccess.GameDataInterface;
 import dataAccess.MemoryGameDOA;
+import dataAccess.SqlGameDOA;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
