@@ -163,4 +163,42 @@ public class GameDataAccessTests {
         gameDataAccess.clear();
         assertNull(gameDataAccess.getGame(1));
     }
+
+    @Test
+    public void updateTest(){
+        ChessGame gameSetup = new ChessGame();
+        ChessGame newGameSetup = new ChessGame();
+
+
+        GameData newGame = new GameData(1, null, null, null, gameSetup);
+
+
+        gameDataAccess.createGame(newGame);
+        newGameSetup.setTeamTurn(ChessGame.TeamColor.BLACK);
+        gameDataAccess.updateGame(1, newGameSetup);
+
+
+
+
+        assertEquals(gameDataAccess.getGame(1).game().getTeamTurn(), ChessGame.TeamColor.BLACK);
+    }
+
+
+    @Test
+    public void updateWrong(){
+        ChessGame gameSetup = new ChessGame();
+        ChessGame newGameSetup = new ChessGame();
+
+
+        GameData newGame = new GameData(1, null, null, null, gameSetup);
+
+
+        gameDataAccess.createGame(newGame);
+        newGameSetup.setTeamTurn(ChessGame.TeamColor.BLACK);
+        gameDataAccess.updateGame(2, newGameSetup);
+
+
+        assertNotEquals(gameDataAccess.getGame(1).game().getTeamTurn(), ChessGame.TeamColor.BLACK);
+    }
+
 }

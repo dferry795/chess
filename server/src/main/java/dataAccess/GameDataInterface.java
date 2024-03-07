@@ -11,5 +11,6 @@ public interface GameDataInterface {
     GameData getGame(int gameID);
     void whiteUpdateGame(int gameID, String username);
     void blackUpdateGame(int gameID, String username);
+    void updateGame(int gameID, ChessGame updatedGame);
     void clear();
 }
