@@ -69,19 +69,21 @@ public class SqlAuthDOA implements AuthDataInterface{
     }
 
     private void configure(){
-        try (var con = DatabaseManager.getConnection()){
+        try {
             DatabaseManager.createDatabase();
+            try (var con = DatabaseManager.getConnection()) {
 
-            con.setCatalog("chess");
+                con.setCatalog("chess");
 
-            var statement = """
-                    CREATE TABLE  IF NOT EXISTS auth (
-               authToken VARCHAR(255) NOT NULL,
-               username VARCHAR(255) NOT NULL
-                    )""";
+                var statement = """
+                             CREATE TABLE  IF NOT EXISTS auth (
+                        authToken VARCHAR(255) NOT NULL,
+                        username VARCHAR(255) NOT NULL
+                             )""";
 
-            try (var createTableStatement = con.prepareStatement(statement)) {
-                createTableStatement.executeUpdate();
+                try (var createTableStatement = con.prepareStatement(statement)) {
+                    createTableStatement.executeUpdate();
+                }
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);

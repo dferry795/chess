@@ -20,7 +20,7 @@ public class Server {
     private final GameService gameServ;
     private final UserService userServ;
 
-    public Server(){
+    public Server() {
         AuthDataInterface authDataAccess = new SqlAuthDOA();
         GameDataInterface gameDataAccess = new SqlGameDOA();
         UserDataInterface userDataAccess = new SqlUserDOA();

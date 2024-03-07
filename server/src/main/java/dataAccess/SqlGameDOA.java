@@ -127,26 +127,27 @@ public class SqlGameDOA implements GameDataInterface{
         }
     }
 
-    private void configure(){
-        try (var con = DatabaseManager.getConnection()){
-            createDatabase();
+    private void configure() {
+        try {
+            DatabaseManager.createDatabase();
+            try (var con = DatabaseManager.getConnection()) {
+
+                con.setCatalog("chess");
 
 
-            con.setCatalog("chess");
+                var createGameTable = """
+                        CREATE TABLE  IF NOT EXISTS game (
+                            gameID int NOT NULL,
+                            whiteUsername varchar(255) DEFAULT NULL,
+                            blackUsername varchar(255) DEFAULT NULL,
+                            gameName varchar(255) DEFAULT NULL,
+                            gameState longtext NOT NULL
+                        )""";
 
 
-            var createGameTable = """
-           CREATE TABLE  IF NOT EXISTS game (
-               gameID int NOT NULL,
-               whiteUsername varchar(255) DEFAULT NULL,
-               blackUsername varchar(255) DEFAULT NULL,
-               gameName varchar(255) DEFAULT NULL,
-               gameState longtext NOT NULL
-           )""";
-
-
-            try (var createTableStatement = con.prepareStatement(createGameTable)) {
-                createTableStatement.executeUpdate();
+                try (var createTableStatement = con.prepareStatement(createGameTable)) {
+                    createTableStatement.executeUpdate();
+                }
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);

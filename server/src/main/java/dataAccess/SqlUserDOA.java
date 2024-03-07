@@ -68,21 +68,23 @@ public class SqlUserDOA implements UserDataInterface {
     }
 
     private void configure() {
-        try (var con = DatabaseManager.getConnection()) {
+        try {
             DatabaseManager.createDatabase();
+            try (var con = DatabaseManager.getConnection()) {
 
-            con.setCatalog("chess");
+                con.setCatalog("chess");
 
-            var createUserTable = """
-                    CREATE TABLE  IF NOT EXISTS user (
-                        username VARCHAR(255) NOT NULL,
-                        password VARCHAR(255) NOT NULL,
-                        email VARCHAR(255) NOT NULL
-                    )""";
+                var createUserTable = """
+                        CREATE TABLE  IF NOT EXISTS user (
+                            username VARCHAR(255) NOT NULL,
+                            password VARCHAR(255) NOT NULL,
+                            email VARCHAR(255) NOT NULL
+                        )""";
 
 
-            try (var createTableStatement = con.prepareStatement(createUserTable)) {
-                createTableStatement.executeUpdate();
+                try (var createTableStatement = con.prepareStatement(createUserTable)) {
+                    createTableStatement.executeUpdate();
+                }
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
