@@ -67,6 +67,28 @@ public class AuthDataAccessTests {
     }
 
     @Test
+    public void deleteTest(){
+        AuthData newAuth = new AuthData("token", "Joseph");
+
+        authDataAcces.createAuth(newAuth);
+        assertNotNull(authDataAcces.getAuth("token"));
+
+        authDataAcces.deleteAuth(newAuth);
+        assertNull(authDataAcces.getAuth("token"));
+    }
+
+    @Test
+    public void deleteWrongAuth(){
+        AuthData newAuth = new AuthData("token", "Joseph");
+
+        authDataAcces.createAuth(newAuth);
+        assertNotNull(authDataAcces.getAuth("token"));
+
+        authDataAcces.deleteAuth(new AuthData("tok3n", "Joseph"));
+        assertNotNull(authDataAcces.getAuth("token"));
+    }
+
+    @Test
     public void clearTest(){
         AuthData newAuth = new AuthData("token", "Joseph");
 

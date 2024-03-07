@@ -67,7 +67,7 @@ public class SqlUserDOA implements UserDataInterface {
         }
     }
 
-    public void configure() {
+    private void configure() {
         try (var con = DatabaseManager.getConnection()) {
             DatabaseManager.createDatabase();
 

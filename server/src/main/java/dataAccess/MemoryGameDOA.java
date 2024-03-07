@@ -15,6 +15,11 @@ public class MemoryGameDOA implements GameDataInterface{
     }
 
     public void createGame(GameData game){
+        for (GameData item: this.gameList){
+            if (item.gameID() == game.gameID()){
+                return;
+            }
+        }
         this.gameList.add(game);
     }
 
