@@ -132,9 +132,6 @@ public class SqlGameDOA implements GameDataInterface{
             DatabaseManager.createDatabase();
             try (var con = DatabaseManager.getConnection()) {
 
-                con.setCatalog("chess");
-
-
                 var createGameTable = """
                         CREATE TABLE  IF NOT EXISTS game (
                             gameID int NOT NULL,

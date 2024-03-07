@@ -4,6 +4,8 @@ import model.AuthData;
 
 import java.sql.SQLException;
 
+import java.util.Properties;
+
 import static dataAccess.DatabaseManager.getConnection;
 
 public class SqlAuthDOA implements AuthDataInterface{
@@ -72,8 +74,6 @@ public class SqlAuthDOA implements AuthDataInterface{
         try {
             DatabaseManager.createDatabase();
             try (var con = DatabaseManager.getConnection()) {
-
-                con.setCatalog("chess");
 
                 var statement = """
                              CREATE TABLE  IF NOT EXISTS auth (

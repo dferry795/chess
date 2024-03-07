@@ -72,8 +72,6 @@ public class SqlUserDOA implements UserDataInterface {
             DatabaseManager.createDatabase();
             try (var con = DatabaseManager.getConnection()) {
 
-                con.setCatalog("chess");
-
                 var createUserTable = """
                         CREATE TABLE  IF NOT EXISTS user (
                             username VARCHAR(255) NOT NULL,
