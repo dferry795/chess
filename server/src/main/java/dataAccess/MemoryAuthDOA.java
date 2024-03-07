@@ -3,11 +3,12 @@ package dataAccess;
 import model.AuthData;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class MemoryAuthDOA  implements AuthDataInterface{
 
-    private final ArrayList<AuthData> authList  = new ArrayList<>();
+    private final HashSet<AuthData> authList  = new HashSet<>();
 
     public AuthData getAuth(String authToken){
         for (AuthData token: this.authList){

@@ -3,11 +3,12 @@ package dataAccess;
 import model.UserData;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class MemoryUserDOA implements UserDataInterface {
 
-    private final ArrayList<UserData> userList = new ArrayList<>();
+    private final HashSet<UserData> userList = new HashSet<>();
 
     public UserData getUser(String username, String password){
         for (UserData user: this.userList){
@@ -19,6 +20,12 @@ public class MemoryUserDOA implements UserDataInterface {
     }
 
     public void createUser(UserData user) {
+        for (UserData individual: this.userList) {
+            if (individual.username() == user.username()) {
+                return;
+            }
+        }
+
         this.userList.add(user);
     }
 

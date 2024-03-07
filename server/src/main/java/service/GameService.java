@@ -5,6 +5,7 @@ import dataAccess.*;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 public class GameService {

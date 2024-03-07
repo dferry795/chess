@@ -3,6 +3,7 @@ package dataAccess;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class MemoryGameDOA implements GameDataInterface{

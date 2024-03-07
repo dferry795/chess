@@ -3,11 +3,10 @@ package dataAccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import model.UserData;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.HashSet;
 
 import static dataAccess.DatabaseManager.createDatabase;
 import static dataAccess.DatabaseManager.getConnection;
@@ -160,7 +159,7 @@ public class SqlGameDOA implements GameDataInterface{
             con.setCatalog("chess");
 
 
-            var createUserTable = """
+            var createGameTable = """
            CREATE TABLE  IF NOT EXISTS game (
                gameID int NOT NULL,
                whiteUsername varchar(255) DEFAULT NULL,
@@ -170,7 +169,7 @@ public class SqlGameDOA implements GameDataInterface{
            )""";
 
 
-            try (var createTableStatement = con.prepareStatement(createUserTable)) {
+            try (var createTableStatement = con.prepareStatement(createGameTable)) {
                 createTableStatement.executeUpdate();
             }
         } catch (SQLException | DataAccessException e) {
