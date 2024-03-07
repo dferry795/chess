@@ -1,6 +1,7 @@
 package dataAccessTests;
 
-import chess.ChessGame;
+import chess.*;
+import com.google.gson.Gson;
 import dataAccess.GameDataInterface;
 import dataAccess.MemoryGameDOA;
 import model.GameData;
@@ -148,5 +149,18 @@ public class GameDataAccessTests {
         gameDataAccess.blackUpdateGame(2, "Phillip");
 
         assertFalse(gameDataAccess.getGame(1).blackUsername() == "Phillip");
+    }
+
+    @Test
+    public void clearTest(){
+        ChessGame gameSetup = new ChessGame();
+
+        GameData newGame = new GameData(1, null, null, null, gameSetup);
+
+        gameDataAccess.createGame(newGame);
+        assertNotNull(gameDataAccess.getGame(1));
+
+        gameDataAccess.clear();
+        assertNull(gameDataAccess.getGame(1));
     }
 }

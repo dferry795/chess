@@ -1,5 +1,6 @@
 package dataAccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -10,6 +11,5 @@ public interface GameDataInterface {
     GameData getGame(int gameID);
     void whiteUpdateGame(int gameID, String username);
     void blackUpdateGame(int gameID, String username);
-    void updateGame(int gameID, String color, String username) throws DataAccessException;
     void clear();
 }
