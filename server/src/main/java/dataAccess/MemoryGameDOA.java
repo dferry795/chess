@@ -1,5 +1,6 @@
 package dataAccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -56,31 +57,14 @@ public class MemoryGameDOA implements GameDataInterface{
         }
     }
 
-    public void updateGame(int gameID, String color, String username) throws DataAccessException {
-
+    public void updateGame(int gameID, ChessGame updatedGame){
         ArrayList<GameData> tempList = new ArrayList<>(this.gameList);
 
-
-        for (GameData game: tempList){
-            if (game.gameID() == gameID){
-
-                if (Objects.equals(color, "WHITE")) {
-                    if (game.whiteUsername() == null) {
-                        this.gameList.remove(game);
-                        GameData new_game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-                        this.gameList.add(new_game);
-                    } else {
-                        throw new DataAccessException("Error: already taken");
-                    }
-                } else if ("BLACK".equals(color)) {
-                    if (game.blackUsername() == null) {
-                        this.gameList.remove(game);
-                        GameData new_game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-                        this.gameList.add(new_game);
-                    } else {
-                        throw new DataAccessException("Error: already taken");
-                    }
-                }
+        for (GameData game: tempList) {
+            if (game.gameID() == gameID) {
+                this.gameList.remove(game);
+                GameData new_game = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), updatedGame);
+                this.gameList.add(new_game);
             }
         }
     }

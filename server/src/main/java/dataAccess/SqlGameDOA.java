@@ -102,41 +102,17 @@ public class SqlGameDOA implements GameDataInterface{
         }
     }
 
-    public void updateGame(int gameID, String color, String username) throws DataAccessException{
+    public void updateGame(int gameID, ChessGame updatedGame){
         try (var con = DatabaseManager.getConnection()){
-            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, gameState FROM game Where gameID=?";
+            var statement = "UPDATE game SET gameState=? WHERE gameID=?";
             try (var ps = con.prepareStatement(statement)){
-                ps.setInt(1, gameID);
+                var updatedGameJson = new Gson().toJson(updatedGame, ChessGame.class);
+                ps.setString(1, updatedGameJson);
+                ps.setInt(2, gameID);
 
-                try (var rs = ps.executeQuery()){
-                    if ("WHITE".equals(color)){
-                        if (rs.getString("whiteUsername") != null){
-                            var newStatement = "UPDATE game SET whiteUsername=? WHERE gameID=?";
-                            try (var newPs= con.prepareStatement(newStatement)){
-                                newPs.setString(1, username);
-                                newPs.setInt(2, gameID);
-
-                                newPs.executeUpdate();
-                            }
-                        } else {
-                            throw new DataAccessException("Error: already taken");
-                        }
-                    } else if ("BLACK".equals(color)) {
-                        if (rs.getString("blackUsername") != null) {
-                            var newStatement = "UPDATE game SET blackUsername=? WHERE gameID=?";
-                            try (var newPs = con.prepareStatement(newStatement)) {
-                                newPs.setString(1, username);
-                                newPs.setInt(2, gameID);
-
-                                newPs.executeUpdate();
-                            }
-                        } else {
-                            throw new DataAccessException("Error: already taken");
-                        }
-                    }
-                }
+                ps.executeUpdate();
             }
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
