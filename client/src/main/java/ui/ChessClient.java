@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessBoard;
+
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
@@ -10,5 +12,7 @@ public class ChessClient {
         }
 
         System.out.println(SET_BG_COLOR_BLACK + "Welcome to 240 chess. Type Help to get started.");
+
+        new ChessboardUI(new ChessBoard()).buildBoard();
     }
 }
