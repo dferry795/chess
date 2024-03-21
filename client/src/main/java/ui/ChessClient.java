@@ -1,9 +1,12 @@
 package ui;
 
 import com.google.gson.Gson;
+import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.RESET_BG_COLOR;
@@ -12,6 +15,7 @@ import static ui.EscapeSequences.RESET_TEXT_COLOR;
 public class ChessClient {
     private final ServerFacade server;
     private Boolean loggedIn = false;
+    private String authToken = null;
     public ChessClient(String serverUrl){
         server = new ServerFacade(serverUrl);
     }
@@ -48,7 +52,7 @@ public class ChessClient {
                 case "list" -> list(params);
                 case "join" -> join(params);
                 case "observe" -> observe(params);
-                case "logout" -> logout(params);
+                case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -60,16 +64,34 @@ public class ChessClient {
     public String register(String... params){
         if (params.length == 3){
             loggedIn = true;
-            Object inputObject = new Gson().toJson(new UserData(params[0], params[1], params[2]));
+            UserData inputObject = new UserData(params[0], params[1], params[2]);
+            AuthData responseObj = server.register(inputObject);
+            authToken = responseObj.authToken();
+            return "Logged in as " + responseObj.username();
+        } else {
+            return "Register expected <username> <password> <email>";
         }
     }
 
     public String login(String... params){
-
+        if (params.length == 2){
+            loggedIn = true;
+            AuthData responseObj = server.login(params[0], params[1]);
+            authToken = responseObj.authToken();
+            return "Logged in as " + responseObj.username();
+        } else {
+            return "Login expected <username> <password>";
+        }
     }
 
-    public String logout(String... params){
-
+    public String logout(){
+        if (loggedIn){
+            loggedIn = false;
+            server.logout(authToken);
+            return "Logged out successfully";
+        } else {
+            return "Must be logged in for that action";
+        }
     }
 
     public String create(String... params){
@@ -77,7 +99,17 @@ public class ChessClient {
     }
 
     public String list(String... params){
+        if (loggedIn){
+            String result = "Games:\n;
 
+            HashSet<GameData> gameList = server.list(authToken);
+
+            for (GameData game: gameList){
+                result = result + game.gameName() + "\n";
+            }
+
+            return result;
+        } else
     }
 
     public String join(String... params){
