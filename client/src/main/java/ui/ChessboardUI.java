@@ -14,7 +14,7 @@ public class ChessboardUI {
         this.gameBoard = gameBoard;
     }
 
-    public void buildBoard(){
+    public String buildBoard(){
         System.out.println(ERASE_SCREEN);
 
         this.gameBoard.resetBoard();
@@ -99,7 +99,7 @@ public class ChessboardUI {
             outputBoard += "\n";
         }
 
-        System.out.print(outputBoard);
+        return outputBoard;
     }
 
     public String evalPiece(ChessPiece piece){

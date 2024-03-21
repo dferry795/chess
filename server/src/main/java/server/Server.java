@@ -121,7 +121,7 @@ public class Server {
             var json = new Gson().fromJson(req.body(), JsonObject.class);
             String color = null;
             if (json.get("playerColor") != null){
-                color = json.get("playerColor").getAsString();
+                color = json.get("playerColor").getAsString().toUpperCase();
             }
             int gameID = json.get("gameID").getAsInt();
             gameServ.joinGame(color, gameID, authToken);
