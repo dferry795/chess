@@ -63,4 +63,32 @@ public class ChessClient {
             Object inputObject = new Gson().toJson(new UserData(params[0], params[1], params[2]));
         }
     }
+
+    public String login(String... params){
+
+    }
+
+    public String logout(String... params){
+
+    }
+
+    public String create(String... params){
+
+    }
+
+    public String list(String... params){
+
+    }
+
+    public String join(String... params){
+
+    }
+
+    public String observe(String... params){
+
+    }
+
+    public String help(String... params){
+
+    }
 }
