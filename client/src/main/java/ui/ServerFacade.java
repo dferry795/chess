@@ -2,6 +2,7 @@ package ui;
 
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,9 +14,11 @@ import model.UserData;
 
 public class ServerFacade {
     private final String serverUrl;
+    private final String serverPort;
 
-    public ServerFacade(String url){
+    public ServerFacade(String url, int port){
         serverUrl = url;
+        serverPort = Integer.toString(port);
     }
 
     public AuthData register(UserData user) throws Exception {
@@ -38,14 +41,18 @@ public class ServerFacade {
         makeRequest("DELETE", path, null, token, Object.class);
     }
 
-    public HashSet<GameData> list(String token) throws Exception {
+    public HashMap<String, ArrayList<GameData>> list(String token) throws Exception {
         var path = "/game";
-        return makeRequest("GET", path, null, token, HashSet.class);
+        return makeRequest("GET", path, null, token, HashMap.class);
     }
 
     public int create(String name, String authToken) throws Exception {
-        var path = "game";
-        return makeRequest("POST", path, name, authToken, int.class);
+        var path = "/game";
+
+        Map<String, String> createData = new HashMap<>();
+        createData.put("gameName", name);
+
+        return makeRequest("POST", path, createData, authToken, int.class);
     }
 
     public void join(String color, int gameID, String authToken) throws Throwable{
@@ -65,7 +72,7 @@ public class ServerFacade {
 
     private <T> T makeRequest(String method, String path, Object request, String authToken, Class<T> responseClass) throws Exception{
         try {
-            URL url = (new URI(serverUrl + path)).toURL();
+            URL url = (new URI(serverUrl + serverPort + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
@@ -93,15 +100,22 @@ public class ServerFacade {
     }
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-        T response = null;
-        if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {
+        if (responseClass == int.class || responseClass == Integer.class){
+            try (InputStream respBody = http.getInputStream()){
                 InputStreamReader reader = new InputStreamReader(respBody);
-                if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
+                return (T) Integer.valueOf(reader.read());
+            }
+        } else {
+            T response = null;
+            if (http.getContentLength() <= 0) {
+                try (InputStream respBody = http.getInputStream()) {
+                    InputStreamReader reader = new InputStreamReader(respBody);
+                    if (responseClass != null) {
+                        response = new Gson().fromJson(reader, responseClass);
+                    }
                 }
             }
+            return response;
         }
-        return response;
     }
 }

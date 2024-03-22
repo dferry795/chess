@@ -1,16 +1,21 @@
 package ui;
 
-import java.util.Scanner;
 
-import static ui.EscapeSequences.*;
+import server.Server;
 
 public class ClientMain {
     public static void main(String[] args) {
-        var serverURL = "http://localhost:8080";
+        var serverURL = "http://localhost:";
         if (args.length == 1){
             serverURL = args[0];
         }
 
-        new ChessClient(serverURL).run();
+        Server server = new Server();
+        var port = server.run(0);
+        System.out.println("Started test HTTP server on " + port);
+
+        new ChessClient(serverURL, port).run();
+
+        server.stop();
     }
 }
