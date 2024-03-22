@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import model.AuthData;
 import model.GameData;
@@ -103,9 +105,11 @@ public class ServerFacade {
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         if (responseClass == int.class || responseClass == Integer.class){
-            try (InputStream respBody = http.getInputStream()){
+            try (InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
-                return (T) Integer.valueOf(reader.read());
+                JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+                int gameId = jsonObject.get("gameID").getAsInt();
+                return (T) Integer.valueOf(gameId);
             }
         } else if (responseClass == HashMap.class) {
             try (InputStream respBody = http.getInputStream()) {

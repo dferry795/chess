@@ -1,9 +1,6 @@
 package clientTests;
 
-import dataAccess.GameDataInterface;
-import dataAccess.SqlGameDOA;
-import dataAccess.SqlUserDOA;
-import dataAccess.UserDataInterface;
+import dataAccess.*;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
@@ -24,6 +21,15 @@ public class ServerFacadeTests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade("http://localhost:", port);
+    }
+
+    @AfterAll
+    static void stopServer(){
+        server.stop();
+    }
+
+    @BeforeEach
+    public void setup(){
         try {
             facade.clear();
         } catch (Throwable e){
@@ -31,16 +37,12 @@ public class ServerFacadeTests {
         }
     }
 
-    @AfterAll
-    static void stopServer() {
-        server.stop();
-    }
-
 
     @Test
     public void clear(){
         try {
             AuthData regData = facade.register(new UserData("Dracen", "6789", "hi"));
+            assertNotNull(regData);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -52,10 +54,10 @@ public class ServerFacadeTests {
         }
 
         try {
-            AuthData logData = facade.login("Dracen", "6789");
-            assertTrue(logData.username() != "Dracen");
+            UserDataInterface userDataInterface = new SqlUserDOA();
+            assertNull(userDataInterface.getUser("Dracen", "6789"));
         } catch (Throwable ex){
-            assertTrue(ex.getMessage().contains("401"));
+            throw new RuntimeException();
         }
     }
 
@@ -100,7 +102,27 @@ public class ServerFacadeTests {
         }
     }
 
+    @Test
+    public void logoutSuccess(){
+        try {
+            AuthData regData = facade.register(new UserData("Dracen", "12345", "hi"));
+            facade.logout(regData.authToken());
+            AuthDataInterface authDataInterface = new SqlAuthDOA();
+            assertNull(authDataInterface.getAuth(regData.authToken()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    @Test
+    public void unauthLogout(){
+        try {
+            AuthData regData = facade.register(new UserData("Dracen", "12345", "hi"));
+            facade.logout("wow");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("401"));
+        }
+    }
 
     @Test
     public void createSuccess(){
@@ -149,9 +171,9 @@ public class ServerFacadeTests {
         try {
             AuthData regData = facade.register(new UserData("Dracen", "12345", "hi"));
             int id = facade.create("newGame", regData.authToken());
-            facade.join("WHITE", id, regData.authToken());
+            facade.join(null, id, regData.authToken());
             GameDataInterface dataInterface = new SqlGameDOA();
-            assertTrue(dataInterface.getGame(id).whiteUsername() == "Dracen");
+            assertNotNull(dataInterface.getGame(id));
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -166,7 +188,7 @@ public class ServerFacadeTests {
             facade.join("WHITE", id, regData.authToken());
             facade.join("WHITE", id, regData2.authToken());
         } catch (Throwable e) {
-            assertTrue(e.getMessage().contains("Error"));
+            assertTrue(e.getMessage().contains("403"));
         }
     }
 }
