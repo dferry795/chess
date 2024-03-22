@@ -149,11 +149,40 @@ public class ChessClient {
         }
     }
 
-    public String observe(String... params){
-
+    public String observe(String... params) throws Throwable {
+        if (loggedIn){
+            if (params.length == 1){
+                server.join(null, Integer.parseInt(params[0]), authToken);
+                String result = "";
+                result += "Success!";
+                ChessBoard board = new ChessBoard();
+                board.resetBoard();
+                result += new ChessboardUI(board).buildBoard();
+                return result;
+            } else {
+                return SET_TEXT_COLOR_RED + "Observe expected <ID>";
+            }
+        } else {
+            return SET_TEXT_COLOR_RED + "Must be logged in for that action";
+        }
     }
 
-    public String help(String... params){
-
+    public String help(){
+        String result = SET_TEXT_COLOR_BLUE;
+        if (loggedIn){
+            result += "create <gameName> " + SET_TEXT_COLOR_MAGENTA + "- a game\n";
+            result += SET_TEXT_COLOR_BLUE + "list " + SET_TEXT_COLOR_MAGENTA + "- games\n";
+            result += SET_TEXT_COLOR_BLUE + "join <ID> [WHITE|BLACK|<empty] " + SET_TEXT_COLOR_MAGENTA + "- a game\n";
+            result += SET_TEXT_COLOR_BLUE + "observe <ID> " + SET_TEXT_COLOR_MAGENTA + "- a game\n";
+            result += SET_TEXT_COLOR_BLUE + "logout " + SET_TEXT_COLOR_MAGENTA + "- when you're done\n";
+            result += SET_TEXT_COLOR_BLUE + "quit " + SET_TEXT_COLOR_MAGENTA + "- playing chess\n";
+            result += SET_TEXT_COLOR_BLUE + "help " + SET_TEXT_COLOR_MAGENTA + "- with commands\n";
+        } else {
+            result += "register <username> <password> <email> " + SET_TEXT_COLOR_MAGENTA + "- to create an account\n";
+            result += SET_TEXT_COLOR_BLUE + "login <username> <password> " + SET_TEXT_COLOR_MAGENTA + "- to play chess\n";
+            result += SET_TEXT_COLOR_BLUE + "quit " + SET_TEXT_COLOR_MAGENTA + "- playing chess\n";
+            result += SET_TEXT_COLOR_BLUE + "help " + SET_TEXT_COLOR_MAGENTA + "- with commands\n";
+        }
+        return result;
     }
 }
