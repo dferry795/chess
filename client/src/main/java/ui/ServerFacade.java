@@ -1,5 +1,6 @@
 package ui;
 
+import java.lang.reflect.Type;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -105,6 +107,16 @@ public class ServerFacade {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 return (T) Integer.valueOf(reader.read());
             }
+        } else if (responseClass == HashMap.class) {
+            try (InputStream respBody = http.getInputStream()) {
+                InputStreamReader reader = new InputStreamReader(respBody);
+                HashMap<String, ArrayList<GameData>> response = new HashMap<>();
+                Gson gson = new Gson();
+                Type type = new TypeToken<HashMap<String, ArrayList<GameData>>>() {
+                }.getType();
+                response = gson.fromJson(reader, type);
+                return (T) response;
+            }
         } else {
             T response = null;
             if (http.getContentLength() <= 0) {
@@ -116,6 +128,7 @@ public class ServerFacade {
                 }
             }
             return response;
+            }
         }
     }
-}
+

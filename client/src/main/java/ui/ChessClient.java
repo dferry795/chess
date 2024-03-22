@@ -20,7 +20,7 @@ public class ChessClient {
     }
 
     public void run(){
-        System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + SET_TEXT_BOLD + SET_TEXT_COLOR_WHITE + "Welcome to 240 chess. Type Help to get started." );
+        System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + SET_TEXT_BOLD + SET_TEXT_COLOR_YELLOW + "Welcome to 240 chess. Type Help to get started." );
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -63,11 +63,11 @@ public class ChessClient {
 
     public String register(String... params) throws Exception {
         if (params.length == 3){
-            loggedIn = true;
             UserData inputObject = new UserData(params[0], params[1], params[2]);
             AuthData responseObj = server.register(inputObject);
             authTokenList.add(responseObj.authToken());
-            return "Logged in as " + responseObj.username() + "\n";
+            loggedIn = true;
+            return SET_TEXT_COLOR_YELLOW + "Logged in as " + responseObj.username() + "\n";
         } else {
             return SET_TEXT_COLOR_RED + "Register expected <username> <password> <email>\n";
         }
@@ -75,10 +75,10 @@ public class ChessClient {
 
     public String login(String... params) throws Exception {
         if (params.length == 2){
-            loggedIn = true;
             AuthData responseObj = server.login(params[0], params[1]);
             authTokenList.add(responseObj.authToken());
-            return "Logged in as " + responseObj.username() + "\n";
+            loggedIn = true;
+            return SET_TEXT_COLOR_YELLOW + "Logged in as " + responseObj.username() + "\n";
         } else {
             return SET_TEXT_COLOR_RED + "Login expected <username> <password>\n";
         }
@@ -90,7 +90,7 @@ public class ChessClient {
             String targetToken = authTokenList.getLast();
             server.logout(targetToken);
             authTokenList.remove(targetToken);
-            return "Logged out successfully\n";
+            return SET_TEXT_COLOR_YELLOW + "Logged out successfully\n";
         } else {
             return SET_TEXT_COLOR_RED + "Must be logged in for that action\n";
         }
@@ -100,7 +100,7 @@ public class ChessClient {
         if (loggedIn){
             if (params.length == 1){
                 int gameID = server.create(params[0], authTokenList.getLast());
-                return "Created " + params[0] + " with ID = " + Integer.toString(gameID) + "\n";
+                return SET_TEXT_COLOR_YELLOW + "Created " + params[0] + " with ID = " + gameID + "\n";
             } else {
                 return SET_TEXT_COLOR_RED + "Create expected <gameName>\n";
             }
@@ -123,7 +123,7 @@ public class ChessClient {
                     }
                 }
             }
-            return result + "\n";
+            return SET_TEXT_COLOR_YELLOW + result + "\n";
         } else {
             return SET_TEXT_COLOR_RED + "Must be logged in for that action\n";
         }
@@ -134,14 +134,14 @@ public class ChessClient {
             String result = "";
             if (params.length == 2){
                 server.join(params[1], Integer.parseInt(params[0]), authTokenList.getLast());
-                result += "Success!";
+                result += SET_TEXT_COLOR_YELLOW + "Success!\n";
                 ChessBoard board = new ChessBoard();
                 board.resetBoard();
                 ChessboardUI boardBuilder = new ChessboardUI(board);
                 result += boardBuilder.buildBoard();
             } else if (params.length == 1) {
                 server.join(null, Integer.parseInt(params[0]), authTokenList.getLast());
-                result += "Success1";
+                result += SET_TEXT_COLOR_YELLOW + "Success!\n";
                 ChessBoard board = new ChessBoard();
                 board.resetBoard();
                 result += new ChessboardUI(board).buildBoard();
