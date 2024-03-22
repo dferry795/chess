@@ -33,9 +33,9 @@ public class ServerFacade {
         return this.makeRequest("POST", path, loginData, null, AuthData.class);
     }
 
-    public Object logout(String token) throws Exception {
+    public void logout(String token) throws Exception {
         var path = "/session";
-        return makeRequest("DELETE", path, null, token, Object.class);
+        makeRequest("DELETE", path, null, token, Object.class);
     }
 
     public HashSet<GameData> list(String token) throws Exception {
@@ -48,14 +48,14 @@ public class ServerFacade {
         return makeRequest("POST", path, name, authToken, int.class);
     }
 
-    public Object join(String color, int gameID, String authToken) throws Throwable{
+    public void join(String color, int gameID, String authToken) throws Throwable{
         var path = "/game";
 
         Map<String, String> joinData = new HashMap<>();
         joinData.put("playerColor", color);
         joinData.put("gameID", Integer.toString(gameID));
 
-        return makeRequest("PUT", path, joinData, authToken, Object.class);
+        makeRequest("PUT", path, joinData, authToken, Object.class);
     }
 
     public Object clear() throws Throwable{

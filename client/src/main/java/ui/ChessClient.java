@@ -22,7 +22,7 @@ public class ChessClient {
     }
 
     public void run(){
-        System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + "Welcome to 240 chess. Type Help to get started." );
+        System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + SET_TEXT_BOLD + SET_TEXT_COLOR_WHITE + "Welcome to 240 chess. Type Help to get started." );
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -54,7 +54,7 @@ public class ChessClient {
                 case "join" -> join(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
-                case "quit" -> "quit";
+                case "quit" -> SET_TEXT_COLOR_WHITE + "Have a nice day!";
                 default -> help();
             };
         } catch (Throwable ex){
