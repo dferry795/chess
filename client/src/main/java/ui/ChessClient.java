@@ -193,6 +193,6 @@ public class ChessClient {
 
     public String clear() throws Throwable {
         server.clear();
-        return "Data cleared";
+        return SET_TEXT_COLOR_YELLOW + "Data cleared\n";
     }
 }
