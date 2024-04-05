@@ -12,7 +12,7 @@ public class MemoryUserDOA implements UserDataInterface {
 
     public UserData getUser(String username, String password){
         for (UserData user: this.userList){
-            if (Objects.equals(user.username(), username) && Objects.equals(user.password(), password)){
+            if (Objects.equals(user.username(), username)){
                 return user;
             }
         }

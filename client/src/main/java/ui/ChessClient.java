@@ -14,6 +14,7 @@ import static ui.EscapeSequences.*;
 public class ChessClient {
     private final ServerFacade server;
     private Boolean loggedIn = false;
+    private Boolean inGame = false;
     private ArrayList<String> authTokenList = new ArrayList<>();
     public ChessClient(String serverUrl, int port){
         server = new ServerFacade(serverUrl, port);
@@ -40,7 +41,7 @@ public class ChessClient {
 
     public String eval(String input){
         try {
-            var tokens = input.toLowerCase().split(" ");
+            var tokens = input.split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
@@ -159,7 +160,7 @@ public class ChessClient {
             if (params.length == 1){
                 server.join(null, Integer.parseInt(params[0]), authTokenList.getLast());
                 String result = "";
-                result += "Success!";
+                result += "Success!\n";
                 ChessBoard board = new ChessBoard();
                 board.resetBoard();
                 result += new ChessboardUI(board).buildBoard();
@@ -174,8 +175,15 @@ public class ChessClient {
 
     public String help(){
         String result = SET_TEXT_COLOR_BLUE;
-        if (loggedIn){
-            result += "create <gameName> " + SET_TEXT_COLOR_MAGENTA + "- a game\n";
+        if (inGame){
+            result += SET_TEXT_COLOR_BLUE + "move <ID> <start(row,column)> <end(row,column)> " + SET_TEXT_COLOR_MAGENTA + "- a chess piece to position\n";
+            result += SET_TEXT_COLOR_BLUE + "redraw " + SET_TEXT_COLOR_MAGENTA + "- the chess board\n";
+            result += SET_TEXT_COLOR_BLUE + "leave " + SET_TEXT_COLOR_MAGENTA + "- the game\n";
+            result += SET_TEXT_COLOR_BLUE + "resign " + SET_TEXT_COLOR_MAGENTA + "- forfeit the game\n";
+            result += SET_TEXT_COLOR_BLUE + "highlight <piece(row,column)>" + SET_TEXT_COLOR_MAGENTA + "- highlight all the moves a piece can make\n";
+            result += SET_TEXT_COLOR_BLUE + "help " + SET_TEXT_COLOR_MAGENTA + "- with commands\n";
+        } else if (loggedIn){
+            result += SET_TEXT_COLOR_BLUE + "create <gameName> " + SET_TEXT_COLOR_MAGENTA + "- a game\n";
             result += SET_TEXT_COLOR_BLUE + "list " + SET_TEXT_COLOR_MAGENTA + "- games\n";
             result += SET_TEXT_COLOR_BLUE + "join <ID> [WHITE|BLACK|<empty] " + SET_TEXT_COLOR_MAGENTA + "- a game\n";
             result += SET_TEXT_COLOR_BLUE + "observe <ID> " + SET_TEXT_COLOR_MAGENTA + "- a game\n";
