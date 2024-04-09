@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataAccess.*;
 import model.*;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.AuthService;
 import service.UserService;
 import service.GameService;
 import spark.*;
 
+import javax.websocket.WebSocketContainer;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,6 +35,8 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/connect", WSServer.class);
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::register);

@@ -18,7 +18,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class WebSocketFacade {
+public class WebSocketFacade extends Endpoint{
     Session session;
     UserGameCommand commands;
     NotificationHandler notificationHandler;
@@ -38,8 +38,7 @@ public class WebSocketFacade {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
-                    System.out.println(notification);
+                    System.out.println(message);
                 }
             });
 
@@ -48,10 +47,6 @@ public class WebSocketFacade {
             throw e;
         }
 
-    }
-
-
-    public void onOpen(Session session, Endpoint endpointConfig){
     }
 
     public void joinBlack(String username, int id){
@@ -64,10 +59,7 @@ public class WebSocketFacade {
         }
     }
 
-    public void broadcast(String excludeVisitorName, Notification notification){
-        var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()){
-            if (c.)
-        }
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 }
