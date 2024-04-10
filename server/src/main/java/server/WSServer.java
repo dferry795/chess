@@ -10,7 +10,7 @@ import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
-import javax.websocket.Session;
+import org.eclipse.jetty.websocket.api.Session;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,8 +23,12 @@ public class WSServer {
         try {
             UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
             switch (action.getCommandType()) {
-                case JOIN_PLAYER -> joinPlayer(new Gson().fromJson(message, JoinPlayer.class), session);
-                case JOIN_OBSERVER -> joinObserver(new Gson().fromJson(message, JoinObserver.class), session);
+                case JOIN_PLAYER:
+                    joinPlayer(new Gson().fromJson(message, JoinPlayer.class), session);
+                    break;
+                case JOIN_OBSERVER:
+                    joinObserver(new Gson().fromJson(message, JoinObserver.class), session);
+                    break;
             }
         } catch (IOException ex){
             Error error = new Error(ex.getMessage());
