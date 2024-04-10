@@ -19,25 +19,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.sql.DriverManager.getConnection;
+
 @WebSocket
 public class WSServer {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
     public final GameDataInterface gameDataInterface = new SqlGameDOA();
     @OnWebSocketMessage
-    public void onMessage(Session session, String message){
-        try {
+    public void onMessage(Session session, String message) throws Exception {
             UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
-            switch (action.getCommandType()) {
-                case JOIN_PLAYER:
-                    joinPlayer(new Gson().fromJson(message, JoinPlayer.class), session);
-                    break;
-                case JOIN_OBSERVER:
-                    joinObserver(new Gson().fromJson(message, JoinObserver.class), session);
-                    break;
+            var conn = getConnection(action.getAuthString(), session);
+
+            if (conn != null) {
+                switch (action.getCommandType()) {
+                    case JOIN_PLAYER:
+                        joinPlayer(new Gson().fromJson(message, JoinPlayer.class), session);
+                        break;
+                    case JOIN_OBSERVER:
+                        joinObserver(new Gson().fromJson(message, JoinObserver.class), session);
+                        break;
+                }
             }
-        } catch (IOException ex){
-            Error error = new Error(ex.getMessage());
-        }
     }
 
     @OnWebSocketError

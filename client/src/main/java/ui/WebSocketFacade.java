@@ -20,11 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketFacade extends Endpoint{
     Session session;
-    UserGameCommand commands;
-    NotificationHandler notificationHandler;
-    ServerMessage message;
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
-
     String authToken;
 
     public WebSocketFacade(String url, String authToken) throws DeploymentException, URISyntaxException, IOException {
@@ -38,7 +33,8 @@ public class WebSocketFacade extends Endpoint{
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    System.out.println(message);
+                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                    observer.notify(serverMessage);
                 }
             });
 
@@ -50,7 +46,7 @@ public class WebSocketFacade extends Endpoint{
     }
 
     public void joinPlayer(String authToken, String username, String color, int id){
-        JoinPlayer joinPlayer = new JoinPlayer(authToken, username, color, Integer.toString(id));
+        JoinPlayer joinPlayer = new JoinPlayer(authToken, username, color, String.valueOf(id));
         try {
             this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
         } catch (IOException e) {
