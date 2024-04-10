@@ -49,13 +49,12 @@ public class WebSocketFacade extends Endpoint{
 
     }
 
-    public void joinBlack(String username, int id){
+    public void joinPlayer(String authToken, String username, String color, int id){
+        JoinPlayer joinPlayer = new JoinPlayer(authToken, username, color, Integer.toString(id));
         try {
-            var message = username + " joined as player black";
-            var notification = new Notification(message);
-
-        } catch (Throwable ex){
-
+            this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
