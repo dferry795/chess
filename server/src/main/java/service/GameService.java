@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import dataAccess.*;
 import model.GameData;
@@ -28,8 +29,11 @@ public class GameService {
 
     public int createGame(String name, String authToken) throws DataAccessException {
         if (authToken != null && authDataAccess.getAuth(authToken) != null) {
-            int gameID = Math.abs(UUID.randomUUID().hashCode());
+            int gameID = listGames(authToken).size();
             ChessGame new_game = new ChessGame();
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            new_game.setBoard(board);
             GameData game = new GameData(gameID, null, null, name, new_game);
             gameDataAccess.createGame(game);
             return gameID;

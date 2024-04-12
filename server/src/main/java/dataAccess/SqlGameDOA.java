@@ -65,13 +65,14 @@ public class SqlGameDOA implements GameDataInterface{
                         var gameStateJson = rs.getString("gameState");
                         ChessGame gameState = new Gson().fromJson(gameStateJson, ChessGame.class);
                         return new GameData(rs.getInt("gameID"), rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), gameState);
+                    } else {
+                        return null;
                     }
                 }
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     public void whiteUpdateGame(int gameID, String username){

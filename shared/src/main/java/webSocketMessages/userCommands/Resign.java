@@ -1,12 +1,12 @@
 package webSocketMessages.userCommands;
 
 public class Resign extends UserGameCommand{
-    String username;
-    public Resign(String authToken, String username) {
+    int gameID;
+    public Resign(String authToken, int id) {
         super(authToken);
         this.commandType = CommandType.RESIGN;
-        this.username = username;
+        this.gameID = id;
     }
 
-    public String getUsername(){return username;}
+    public int getGameID(){return this.gameID;}
 }

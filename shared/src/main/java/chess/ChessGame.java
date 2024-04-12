@@ -12,6 +12,8 @@ import java.util.Objects;
  */
 public class ChessGame {
 
+    public Boolean resign = false;
+
     private TeamColor teamTurn;
     private ChessBoard board;
 
@@ -104,37 +106,41 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = this.board.getPiece(move.getStartPosition());
 
-        if (piece != null) {
-            if (piece.getTeamColor() != this.getTeamTurn()) {
-                throw new InvalidMoveException("Not teams turn");
-            }
+        if (!resign) {
+            if (piece != null) {
+                if (piece.getTeamColor() != this.getTeamTurn()) {
+                    throw new InvalidMoveException("Not teams turn");
+                }
 
-            Collection<ChessMove> movesSet = piece.pieceMoves(this.board, move.getStartPosition());
+                Collection<ChessMove> movesSet = piece.pieceMoves(this.board, move.getStartPosition());
 
-            if (movesSet.contains(move)) {
-                this.board.addPiece(move.getStartPosition(), null);
-                this.board.addPiece(move.getEndPosition(), piece);
+                if (movesSet.contains(move)) {
+                    this.board.addPiece(move.getStartPosition(), null);
+                    this.board.addPiece(move.getEndPosition(), piece);
 
-                if (this.isInCheck(piece.getTeamColor())) {
-                    this.board.addPiece(move.getStartPosition(), piece);
-                    this.board.addPiece(move.getEndPosition(), null);
-                    throw new InvalidMoveException("Cannot put king in check");
-                } else {
-                    if (move.getPromotionPiece() != null) {
-                        ChessPiece promoPiece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
-                        this.board.addPiece(move.getEndPosition(), promoPiece);
-                    }
-                    if (this.getTeamTurn() == TeamColor.WHITE) {
-                        this.setTeamTurn(TeamColor.BLACK);
+                    if (this.isInCheck(piece.getTeamColor())) {
+                        this.board.addPiece(move.getStartPosition(), piece);
+                        this.board.addPiece(move.getEndPosition(), null);
+                        throw new InvalidMoveException("Cannot put king in check");
                     } else {
-                        this.setTeamTurn(TeamColor.WHITE);
+                        if (move.getPromotionPiece() != null) {
+                            ChessPiece promoPiece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+                            this.board.addPiece(move.getEndPosition(), promoPiece);
+                        }
+                        if (this.getTeamTurn() == TeamColor.WHITE) {
+                            this.setTeamTurn(TeamColor.BLACK);
+                        } else {
+                            this.setTeamTurn(TeamColor.WHITE);
+                        }
                     }
+                } else {
+                    throw new InvalidMoveException("Invalid Move");
                 }
             } else {
-                throw new InvalidMoveException("Invalid Move");
+                throw new InvalidMoveException();
             }
-        } else{
-            throw new InvalidMoveException();
+        } else {
+            throw new InvalidMoveException("Cannot make move");
         }
     }
 
